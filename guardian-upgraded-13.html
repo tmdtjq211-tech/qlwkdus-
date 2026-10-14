@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>말씀 수호자 · ORBIT FLIGHT</title>
+<style>
+:root{color-scheme:dark;--gold:#ffd66d;--cyan:#70e8f2;--bg:#050916;--muted:#91a2be}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#eaf1ff;font-family:system-ui,'Malgun Gothic',sans-serif;overscroll-behavior:none}button,select{font:inherit}button{cursor:pointer;color:inherit;background:#14213b;border:1px solid #344560;border-radius:12px;padding:12px 16px;touch-action:manipulation}button:focus-visible,select:focus-visible{outline:3px solid var(--cyan)}button:disabled{opacity:.45;cursor:default}.primary{background:var(--gold);color:#172035;border-color:var(--gold);font-weight:800}.hidden{display:none!important}#app{max-width:620px;margin:auto;height:100dvh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 20%,#17243e,#050916 70%)}header{padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #24324a;gap:8px}header strong{color:var(--gold)}.micro{font-size:12px;color:var(--muted)}#field{position:relative;flex:1;min-height:140px}canvas{display:block;width:100%;height:100%;touch-action:none}#stats{display:flex;gap:12px;font-size:12px;padding:8px 16px;flex-wrap:wrap;color:#b5c7e1}#verse{line-height:1.8;padding:12px 18px;font-size:15px;max-height:24dvh;min-height:66px;overflow:auto;word-break:keep-all;background:#091224;border-top:1px solid #293750;touch-action:pan-y}.done{color:var(--cyan)}.target{color:var(--gold);border-bottom:2px solid var(--gold);font-weight:bold}.future{color:#9aaac3}.controls{display:flex;gap:8px;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:#091224}.controls button{flex:1}.panel{position:fixed;inset:0;z-index:10;background:#050916f7;overflow-y:auto;padding:30px 20px;padding-top:max(30px,env(safe-area-inset-top));touch-action:pan-y}.sheet{max-width:520px;margin:0 auto}.eyebrow{font-size:11px;letter-spacing:3px;color:var(--cyan);margin:12px 0}h1{font-size:36px;margin:12px 0;color:var(--gold);letter-spacing:-1.5px}h2{margin:8px 0 16px;font-size:26px}p{line-height:1.75;color:#b7c7df}.card{border:1px solid #2d3a51;background:#0f1a2d;border-radius:18px;padding:18px;margin:16px 0}label{display:block;font-size:13px;color:#afc0d8;margin:14px 0 8px}select{width:100%;background:#0b1425;border:1px solid #344560;color:#fff;padding:12px;border-radius:10px}.row{display:flex;gap:8px}.row>*{flex:1}.chips{display:flex;flex-wrap:wrap;gap:7px}.chips button{padding:9px 13px}.chips .selected{border-color:var(--gold);color:var(--gold);background:#413723}.wide{width:100%}.tag{font-size:12px;color:var(--cyan)}#toast{position:absolute;left:10px;right:10px;top:9px;text-align:center;pointer-events:none;color:var(--gold);font-weight:bold;font-size:14px;text-shadow:0 2px 7px #000}#bossHUD{position:absolute;left:12px;right:12px;top:35px;text-align:center;pointer-events:none;color:#ff92ae;font-size:12px}#progress{height:3px;background:#17243c}#progress span{display:block;height:100%;background:var(--cyan);width:0}#resultMetrics{font-size:20px;color:var(--gold)}#reviewText{font-size:18px;color:#e9f3ff}.notice{font-size:12px;color:#91a2be}.options-note{font-size:12px;line-height:1.6}.screen-actions{display:grid;gap:10px;margin:20px 0}.manual{border-top:1px solid #293750;padding-top:14px;font-size:13px}#modeDesc{min-height:38px}.paused-title{color:var(--gold)}@media(max-height:570px){.panel{padding-top:16px}h1{font-size:26px}.card{margin:10px 0;padding:12px}#verse{max-height:20dvh;font-size:13px}header{padding:6px 12px}.controls{padding-top:6px;padding-bottom:6px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* ORBIT / flight visual system */
+:root{--gold:#b9f8ed;--cyan:#72dacb;--bg:#030810;--muted:#708a9b}body{background:#030810}#app{max-width:680px;background:#040a14}header{border-bottom:1px solid #142635;background:#07111cf0;padding:13px 20px}header strong{font-size:16px;letter-spacing:-.4px;color:#effffa}header .micro{margin-top:3px;font-size:10px;letter-spacing:1px}button{border-radius:8px;border-color:#25404a;background:#0b1b25;padding:12px 16px}button:hover{border-color:#69c5bc}.primary{background:#bcf4e5;color:#092d2e;border:0;box-shadow:0 5px 24px #58cbb312;font-weight:750;letter-spacing:.1px}.panel{background:radial-gradient(ellipse at 75% 0%,#123c4444,transparent 50%),#050d17;padding-top:24px}.sheet{max-width:520px}.eyebrow{color:#77abac;letter-spacing:3.5px;font-size:10px}h1{color:#e4f5f3;font-size:43px;line-height:1.13;letter-spacing:-2px;margin:0}h1 small{display:block;font-weight:400;font-size:16px;letter-spacing:6px;color:#77bcb6;margin-top:14px}h2{color:#ecfffa;font-weight:600}p{color:#8faeb9;font-size:14px}.card{background:#0b192480;border:1px solid #203842;border-radius:12px;padding:17px;margin:18px 0}label{font-size:11px;color:#8fadb8;letter-spacing:.4px;margin:12px 0 8px}select{background:#07151e;border:1px solid #263e47;color:#dcefea;border-radius:6px;padding:12px;font-size:13px}.chips button{font-size:12px;border-radius:5px;background:transparent;padding:8px 11px;min-width:45px}.chips .selected{color:#befff1;background:#123b3b;border-color:#6ac7b6}.options-note{margin:9px 0 0;font-size:12px;min-height:0!important}.manual{font-size:12px;border:0;padding-top:5px}.manual p{font-size:12px;line-height:1.8}.notice{font-size:10px;color:#637e8c}.hero{height:215px;position:relative;overflow:hidden;margin:0 -20px;background:radial-gradient(ellipse at 50% 65%,#24596155,transparent 63%)}.hero svg{width:100%;height:100%}.hero-label{position:absolute;left:20px;bottom:20px;font-size:9px;letter-spacing:2px;color:#659a9e}.hero-label.right{left:auto;right:20px;text-align:right}.menu-heading{display:flex;align-items:flex-start;justify-content:space-between;margin-top:18px}.edition{font-size:9px;letter-spacing:2px;border-top:1px solid #457b80;padding-top:7px;color:#7ca7b0;margin-top:5px}#stats{justify-content:space-between;color:#6d95a1;font-size:10px;padding:10px 20px;letter-spacing:.4px;background:#07111c}#stats b{color:#e1faf2;font-size:13px;margin-left:4px;font-variant-numeric:tabular-nums}#verse{background:#07111c;border-color:#1b313d;line-height:1.8;padding:13px 20px;font-size:14px;max-height:23dvh}.target{color:#befff1;background:#153832;border:0;border-radius:3px;padding:1px 4px}.future{color:#738995}.done{color:#aad8cc}#progress{height:2px;background:#152b35}#progress span{background:#9cedd9;box-shadow:0 0 8px #78d9cc}.controls{justify-content:center;padding:9px 12px max(9px,env(safe-area-inset-bottom));color:#577d8c;font-size:10px;letter-spacing:1px;border-top:1px solid #132b37;background:#07111c}#toast{font-size:12px;top:13px;color:#c7fff0;font-weight:500;letter-spacing:.3px}#bossHUD{top:38px;font-size:10px;color:#dfb3a8}#pauseBtn{font-size:14px;padding:8px 13px;color:#aaccc8}#resultMetrics{font-size:22px;color:#beffea}.flight-instruction{display:flex;gap:10px;align-items:center;color:#a5c8c5;font-size:12px;margin:12px 0}.flight-instruction strong{font-weight:500;color:#d5f5ec}.hero svg{filter:drop-shadow(0 12px 22px #1d8a9233)}@media(max-height:650px){.hero{height:140px}.menu-heading{margin-top:10px}h1{font-size:32px}header{padding:8px 15px}#stats{padding:6px 15px}}@media(min-width:720px){#app{border-left:1px solid #142b34;border-right:1px solid #142b34}.hero{height:250px}}
+.hangar-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-card{border:1px solid #294651;border-radius:12px;padding:13px;background:#0a1b26}.ship-card.selected{border-color:#a0f1d8;background:#12332f}.ship-card svg{width:100%;height:65px}.ship-card h3{font-size:15px;margin:5px 0}.ship-card p{font-size:11px;line-height:1.65;min-height:54px;margin:7px 0}.ship-card button{width:100%;font-size:12px;padding:9px 5px}.wallet{font-size:23px;font-weight:750;color:#f5d783;font-variant-numeric:tabular-nums}.hangar-head{display:flex;align-items:center;justify-content:space-between}.hangar-head h2{font-size:21px;margin:0}.item-legend{font-size:11px;line-height:1.9;color:#9bbcaf}#buffHUD{font-size:10px;color:#e6d593;min-height:17px;padding:2px 18px 5px;background:#07111c}#goldHUD{color:#f5d783}@media(max-width:360px){.hangar-grid{grid-template-columns:1fr}}
+
+/* Compact hangar: clear controls, matte surfaces, restrained amber accents. */
+:root{--gold:#e9bc6f;--cyan:#9dc2d4;--bg:#171c24;--muted:#9aabba}
+body,#app{background:#171c24}.panel{background:#1a2029;padding:22px 16px}.sheet{max-width:520px}header,#stats,#verse,.controls,#buffHUD{background:#171c24}header .micro{letter-spacing:0}h1{font-size:30px;letter-spacing:-1px;color:#f2efe7}h1 small{font-size:13px;letter-spacing:0;margin-top:8px;color:#a5b0bc}.menu-heading{margin:0 0 18px}.flight-instruction{margin:0 0 18px;color:#aab6c3}.flight-instruction strong{color:#aab6c3}.card{background:#222a35;border:1px solid #39424e;border-radius:5px;padding:15px;margin:12px 0}.primary{background:#e9bc6f;color:#292016;box-shadow:none;border-radius:5px;font-weight:800}button,select{background:#1a212b;border-color:#48525f;border-radius:4px}button:hover{border-color:#e9bc6f}p,label{color:#b1bdc9;letter-spacing:0}.hangar-head h2{font-size:19px}.wallet{font-size:19px;color:#e9bc6f}.hangar-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:15px}.ship-card{display:flex;flex-direction:column;align-items:center;padding:5px 2px 9px;min-width:0;border-radius:4px;border:1px solid #49525e;background:#19212b;cursor:pointer}.ship-card.selected{background:#39352b;border:2px solid #e9bc6f;padding:4px 1px 8px}.ship-card svg{height:66px;width:100%}.ship-card strong{font-size:12px;color:#e5e8eb}.ship-card span{font-size:10px;color:#aeb8c3;margin-top:5px}.ship-detail{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding:12px 0 0;border-top:1px solid #424b57}.ship-detail b{font-size:15px}.ship-detail small{font-size:11px;font-weight:400;color:#aeb8c3;margin-left:5px}.ship-detail p{font-size:11px;line-height:1.65;margin:6px 0}.ship-detail button{flex-shrink:0;padding:11px 10px;font-size:12px}.advanced{border-top:1px solid #48525f;margin-top:18px;padding-top:14px}summary{cursor:pointer;color:#e0d5bf;font-size:13px;font-weight:650;min-height:28px}.item-legend[open] summary{margin-bottom:12px}.chips .selected{background:#493d29;border-color:#e9bc6f;color:#ffdda4}.options-note{font-size:11px;line-height:1.65}.controls{letter-spacing:0}button:focus-visible,summary:focus-visible{outline:2px solid #e9bc6f;outline-offset:3px}@media(max-width:360px){.panel{padding:18px 10px}.card{padding:11px}.hangar-grid{gap:4px;grid-template-columns:repeat(4,minmax(0,1fr))}.ship-card svg{height:54px}}
+.upgrade-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.upgrade-card{padding:12px 10px;background:#19212b;border:1px solid #45505e;border-radius:6px}.upgrade-card b{font-size:13px}.upgrade-card small{display:block;font-size:10px;color:#b1bdc9;margin-top:5px}.upgrade-card p{font-size:12px}.upgrade-card button{width:100%;font-size:12px;padding:10px 4px}.aux-heading{font-size:13px;margin:22px 0 10px}.aux-rail{display:flex;gap:9px;overflow-x:auto;touch-action:pan-x pan-y;scroll-snap-type:x proximity;padding:3px 2px 12px;scrollbar-width:thin;scrollbar-color:#b99a68 #1a212b}.aux-tile{flex:0 0 108px;scroll-snap-align:start;padding:10px 6px;border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:7px}.aux-tile svg{width:56px;height:56px}.aux-tile b{font-size:13px}.aux-tile span{font-size:10px;color:#b8c1ca}.aux-tile.selected{border-color:#e9bc6f;background:#383329}.aux-detail{border-top:1px solid #46515d;padding-top:8px;min-height:150px}.aux-detail p{font-size:12px}.aux-detail small{color:#9aabba}.aux-detail button{font-size:12px;padding:11px 8px}@media(max-width:360px){.aux-tile{flex-basis:94px}}
+
+/* Clear launch hierarchy and readable equipment panels. */
+.panel{background:#141b25}.card{background:#1d2734;border-color:#354354;border-radius:10px;box-shadow:0 5px 14px #00000012}.menu-heading{padding:10px 0 18px;border-bottom:1px solid #394759}.menu-heading h1{font-size:32px}.hangar-head h2{letter-spacing:-.5px}.ship-card{background:linear-gradient(160deg,#253546,#18222e);border-radius:7px}.ship-card.selected{background:#3b3529}.upgrade-card{border-radius:8px}.aux-tile{background:#192431}.aux-tile.selected{background:#3b3529}.wallet{background:#302b22;padding:7px 12px;border-radius:7px}.flight-instruction{font-size:12px}#startBtn{position:sticky;bottom:12px;z-index:2;min-height:52px;box-shadow:0 6px 20px #0008;font-size:17px}#importPreview{padding:12px;border:1px solid #d6ac62;border-radius:6px;margin-top:12px}#importSummary{font-size:12px}#backupNotice{min-height:18px}.row button{min-width:0;font-size:12px}header strong{letter-spacing:-.5px}#stats{gap:9px;padding:9px 14px}#stats span{white-space:nowrap}#verse{border-top:2px solid #b69a6260}.target{background:#3d3625;color:#ffe0a4}.done{color:#b0d8cb}.future{color:#9eaebe}
+
+#verse{order:0;position:relative;flex-shrink:0;border-top:0;border-bottom:1px solid #39424e;padding:max(12px,env(safe-area-inset-top)) 18px 12px;max-height:23dvh;min-height:66px}
+#field{order:1}#app>header{order:2;flex-shrink:0;padding:8px 16px;border-top:1px solid #39424e}#stats{order:3;flex-shrink:0}#buffHUD{order:4;flex-shrink:0}#progress{order:5;flex-shrink:0}.controls{order:6;flex-shrink:0}
+#difficultyChoice .sheet{padding-top:8vh}#difficultyChoice button{width:100%;margin-top:12px;text-align:left;padding:17px}#difficultyChoice button small{display:block;font-size:12px;font-weight:400;margin-top:6px;opacity:.8}
+@media(max-height:650px){#verse{max-height:21dvh;font-size:13px;padding:8px 12px}#app>header{padding:5px 12px}#stats{padding:5px 12px}}
+</style></head><body>
+<div id="app"><header><div><strong id="chapterHUD">말씀 수호자</strong><div id="modeHUD" class="micro">기억의 우주</div></div><button id="pauseBtn" aria-label="일시정지">Ⅱ</button></header><div id="stats"><span>점수 <b id="scoreHUD">0</b></span><span>G <b id="goldHUD">0</b></span><span>연속 <b id="comboHUD">0</b></span><span>공격력 <b id="powerHUD">×1.0</b></span><span>보호막 <b id="shieldHUD">0</b></span><span>재도전 <b id="retryHUD">0</b></span><span>오답 여유 <b id="allowHUD">3</b></span></div><div id="buffHUD" aria-live="polite"></div><div id="progress"><span></span></div><div id="field"><canvas id="game" aria-label="드래그로 비행하여 다음 정답 문구에 닿으세요"></canvas><div id="toast"></div><div id="bossHUD"></div></div><div id="verse"></div><div class="controls" id="controlHint">드래그로 이동 · 잡몹 자동 사격 · 정답마다 공격력 +0.2</div></div>
+<section id="menu" class="panel"><div class="sheet"><div class="menu-heading"><h1>말씀 수호자<small>계시록 암송 비행</small></h1></div><div class="flight-instruction"><span>↗</span><strong>빠르게 이동해 정답을 먹고, 운석을 피하세요.</strong></div><div class="card"><b>처음이라면 · 내 난이도 찾기</b><p>비행 조작 테스트 30초 × 3판. 정답 획득과 실수를 보고 추천 난이도를 자동 적용합니다. 테스트 중에는 정답 힌트가 보입니다.</p><button id="testBtn" class="primary wide">3판 테스트 시작</button><p id="recommendNote" class="options-note"></p></div><section class="card"><div class="hangar-head"><h2>비행선 격납고</h2><span class="wallet" id="walletGold">0 G</span></div><p class="options-note">정답 보상 보석은 15% 확률로 1개 · 잡몹 처치 시 보석 1개 · 잡몹 처치 보석을 먹으면 +50 G · 정답·처치 시 낮은 확률로 아이템 · 절 완성 +10 G</p><div id="shipGrid" class="hangar-grid"></div><div id="shipDetail" class="ship-detail" aria-live="polite"></div><p id="shopNotice" class="options-note" aria-live="polite"></p><p id="saveNote" class="notice"></p></section><section class="card"><h2 style="font-size:19px;margin:0">무기 강화 · 보조무기</h2><div id="armory"></div></section><section class="card"><h2 style="font-size:19px">기록 보관</h2><p class="options-note">골드·기체·강화·설정을 파일로 옮길 수 있습니다.</p><div class="row"><button id="exportSave">저장파일 받기</button><button id="importSave">파일 불러오기</button></div><input id="saveFile" type="file" accept=".json,application/json" hidden><p id="backupNotice" class="options-note" aria-live="polite"></p><div id="importPreview" class="hidden"><p id="importSummary"></p><div class="row"><button id="confirmImport">이 기록으로 교체</button><button id="cancelImport">취소</button></div></div></section><details class="card item-legend"><summary>아이템과 보상 안내</summary><b>비행 중 아이템을 직접 먹으세요</b><br>⛨ 운석 차단: 10초간 일반 운석·메테오 제거 및 등장 중지<br>⚡ 화력 증폭: 8초간 실제 공격력 3배<br>◆ 보호막: 충돌·탄환 1회 방어 · 기체 보호막 효과<br>실전·빈칸 전용: ◇ 장애물 숨김 0.5초 / ϟ 번개 공격<br>정답마다 공격력 +0.2 · 정답·처치 시 확률 아이템 · 절 완성 골드 보상<br>골드와 비행선은 같은 브라우저·주소에 저장됩니다. 테스트에서는 기본 기체를 쓰며 골드가 적립되지 않습니다.</details><div id="dataNote" class="notice"></div><div class="card"><label for="difficultyPreset">난이도</label><select id="difficultyPreset"><option value="beginner">초급</option><option value="intermediate" selected>중급</option><option value="advanced">고급</option><option value="custom">커스텀</option></select><p id="presetNote" class="options-note"></p><p class="options-note">정답은 직접 획득 · 적은 자동 사격</p><label>도전할 장</label><div id="chapterGrid" class="chips"></div><label for="mode">암송 단계</label><select id="mode"><option value="learn">1. 연습 — 정답을 보며 익히기</option><option value="blank">2. 빈칸 — 문맥으로 떠올리기</option><option value="recall">3. 암송 — 기억으로 완성하기</option></select><p id="modeDesc" class="options-note"></p><div class="row"><div><label for="range">분량</label><select id="range"><option value="short">선택한 절부터 5절</option><option value="full">장 전체</option></select></div><div><label for="startVerse">시작 절</label><select id="startVerse"></select></div></div><details class="advanced"><summary>속도·적·운석 세부 설정</summary><label for="speed">속도</label><select id="speed"><option value="gentle">아주 천천히 · 처음 배우기</option><option value="slow">천천히 · 편안한 비행</option><option value="normal" selected>보통 · 빠른 비행</option><option value="fast">빠르게 · 집중 도전</option><option value="turbo">매우 빠르게 · 고속 돌파</option></select><label for="mobInterval">잡몹 출현 간격</label><select id="mobInterval"><option value="8">8초</option><option value="6">6초</option><option value="4" selected>4초</option><option value="2.5">2.5초</option><option value="1.5">1.5초</option><option value="0.8">0.8초</option></select><label for="mobLimit">잡몹 동시 등장 수</label><select id="mobLimit"><option value="0">없음</option><option value="1">최대 1마리</option><option value="2" selected>최대 2마리</option><option value="3">최대 3마리</option><option value="4">최대 4마리</option><option value="6">최대 6마리</option></select><label for="meteorPattern">일반 운석 움직임</label><select id="meteorPattern"><option value="straight" selected>직선 낙하 · 기본</option><option value="zigzag">지그재그 낙하</option></select><label for="meteorRatio">운석 속도 · 문구 낙하 속도 대비</label><select id="meteorRatio"><option value="0.8">0.8배 · 느리게</option><option value="1">1배 · 같은 속도</option><option value="1.5" selected>1.5배 · 빠르게 (기본)</option><option value="2">2배 · 고속 회피</option><option value="2.5">2.5배 · 극한 회피</option></select><label for="stormFrequency">메테오 경보 · 30초마다 5회</label><select id="stormFrequency"><option value="30" selected>켜기 · 1초 간격 경고 ×5</option><option value="0">끄기</option></select><label for="stormBoost">습격 운석 속도 · 일반 운석 대비</label><select id="stormBoost"><option value="1.5">1.5배</option><option value="2" selected>2배 · 고속 돌파</option><option value="2.5">2.5배 · 초고속</option></select><p class="options-note">30초마다 경고가 1초 간격으로 5개 뜹니다. 각 경고 1초 뒤 메테오가 떨어집니다. 느낌표 메테오는 파괴 불가! 보스전 정답 획득으로 공격력 ×5까지 강화하세요.</p><p class="options-note">약한 적·보통 적·강한 적이 설정한 간격과 최대 수에 맞춰 등장합니다. 일부는 주기적으로 사격합니다. 정답마다 공격력 +0.2 (최대 ×5). 일반 운석은 위에서 직선으로 내려옵니다. 지그재그는 선택할 수 있습니다. 보스전에는 운석이 없습니다. 속도 배율을 낮추면 더 여유롭게 피할 수 있습니다. 절이 끝나면 바로 다음으로 이어집니다.</p></details></div><button id="startBtn" class="primary wide">출격하기</button><div class="manual"><p>화면 어디든 누르고 드래그하면 기체가 손가락 위에서 따라옵니다.<br>PC는 마우스 드래그 또는 방향키<br>보스전에서는 자동 연사! 빈칸에 맞는 문구를 직접 먹으면 공격력이 0.2씩 증가합니다 (최대 ×5).<br>문구가 여러 위치에서 연속으로 쏟아집니다. 다음 정답으로 빠르게 이동하세요.<br>운석과 보스 탄환을 피하세요. 오답은 한 도전에서 3번까지 초기화 없이 봐줍니다. 처음에는 느린 속도로 연습할 수 있습니다.</p><p class="notice">학습·빈칸은 틀린 단어부터, 암송은 해당 절 처음부터 재도전합니다.</p></div></div></section>
+<section id="testResult" class="panel hidden"><div class="sheet"><div class="eyebrow">FLIGHT CHECK</div><h2 id="testTitle"></h2><div id="testMetrics" class="card"></div><p id="testDetail"></p><button id="testNext" class="primary wide">다음 테스트</button><button id="testExit" class="wide" style="margin-top:12px">테스트 종료 · 설정으로</button></div></section><section id="review" class="panel hidden"><div class="sheet"><div class="eyebrow">VERSE COMPLETE</div><h2 id="reviewTitle"></h2><div class="card" id="reviewText"></div><p id="reviewDetail"></p><button id="nextBtn" class="primary wide">읽었어요 · 다음으로 →</button></div></section>
+<section id="difficultyChoice" class="panel hidden"><div class="sheet"><h2>보스 격파!</h2><p>다음 구간은 어떻게 진행할까요?</p><div id="choiceStatus" class="card"></div><button id="choiceEasy">더 쉽게<small>낙하 속도·다음 보스 체력 15% 감소 / 잡몹 출현 간격 증가</small></button><button id="choiceSame" class="primary">지금 그대로<small>현재 난이도로 계속 진행</small></button><button id="choiceHard">더 어렵게<small>낙하 속도·다음 보스 체력 15% 증가 / 잡몹 출현 간격 감소</small></button><p class="notice">암송 단계와 기체·무기 능력은 그대로입니다. 이번 도전의 남은 구간에 적용됩니다.</p></div></section>
+<section id="pause" class="panel hidden"><div class="sheet"><h2 class="paused-title">잠깐 쉬어가기</h2><p>움직임과 시간이 모두 멈췄어요.</p><div class="screen-actions"><button id="resumeBtn" class="primary">계속하기</button><button id="quitBtn">메인으로</button></div></div></section>
+<section id="result" class="panel hidden"><div class="sheet"><div class="eyebrow">MISSION COMPLETE</div><h2>기억으로 지켜낸 우주</h2><div id="resultMetrics" class="card"></div><p id="resultText"></p><div class="screen-actions"><button id="retryWeakBtn" class="primary">헷갈린 구절만 다시</button><button id="advanceBtn">다음 단계로 도전</button><button id="menuBtn">메인으로</button></div></div></section>
+<!-- 기존 1~22장 data.js를 이 HTML과 같은 폴더에 두면 우선 사용합니다. -->
+<script src="data.js" onerror="window.externalBibleMissing=true"></script>
+<script id="fallback-data">const FALLBACK_BIBLE={"18": {"1": "이 일 후에 다른 천사가 하늘에서 내려오는 것을 보니 큰 권세를 가졌는데 그의 영광으로 땅이 환하여지더라", "2": "힘센 음성으로 외쳐 가로되 무너졌도다 무너졌도다 큰 성 바벨론이여 귀신의 처소와 각종 더러운 영의 모이는 곳과 각종 더럽고 가증한 새의 모이는 곳이 되었도다", "3": "그 음행의 진노의 포도주를 인하여 만국이 무너졌으며 또 땅의 왕들이 그로 더불어 음행하였으며 땅의 상고들도 그 사치의 세력을 인하여 치부하였도다 하더라", "4": "또 내가 들으니 하늘로서 다른 음성이 나서 가로되 내 백성아, 거기서 나와 그의 죄에 참예하지 말고 그의 받을 재앙들을 받지 말라", "5": "그 죄는 하늘에 사무쳤으며 하나님은 그의 불의한 일을 기억하신지라", "6": "그가 준 그대로 그에게 주고 그의 행위대로 갑절을 갚아주고 그의 섞은 잔에도 갑절이나 섞어 그에게 주라", "7": "그가 어떻게 자기를 영화롭게 하였으며 사치하였든지 그만큼 고난과 애통으로 갚아 주라 그가 마음에 말하기를 나는 여황으로 앉은 자요 과부가 아니라 결단코 애통을 당하지 아니하리라 하니", "8": "그러므로 하루 동안에 그 재앙들이 이르리니 곧 사망과 애통과 흉년이라 그가 또한 불에 살라지리니 그를 심판하신 주 하나님은 강하신 자이심이니라", "9": "그와 함께 음행하고 사치하던 땅의 왕들이 그 불붙는 연기를 보고 위하여 울고 가슴을 치며", "10": "그 고난을 무서워하여 멀리 서서 가로되 화 있도다 화 있도다 큰 성, 견고한 성 바벨론이여 일시간에 네 심판이 이르렀다 하리로다", "11": "땅의 상고들이 그를 위하여 울고 애통하는 것은 다시 그 상품을 사는 자가 없음이라", "12": "그 상품은 금과 은과 보석과 진주와 세마포와 자주 옷감과 비단과 붉은 옷감이요 각종 향목과 각종 상아 기명이요 값진 나무와 진유와 철과 옥석으로 만든 각종 기명이요", "13": "계피와 향료와 향과 향유와 유향과 포도주와 감람유와 고운 밀가루와 밀과 소와 양과 말과 수레와 종들과 사람의 영혼들이라", "14": "바벨론아 네 영혼의 탐하던 과실이 네게서 떠났으며 맛 있는 것들과 빛난 것들이 다 없어졌으니 사람들이 결코 이것들을 다시 보지 못하리로다", "15": "바벨론을 인하여 치부한 이 상품의 상고들이 그 고난을 무서워하여 멀리 서서 울고 애통하여", "16": "가로되 화 있도다 화 있도다 큰 성이여 세마포와 자주와 붉은 옷을 입고 금과 보석과 진주로 꾸민 것인데", "17": "그러한 부가 일시간에 망하였도다 각 선장과 각처를 다니는 선객들과 선인들과 바다에서 일하는 자들이 멀리 서서", "18": "그 불붙는 연기를 보고 외쳐 가로되 이 큰 성과 같은 성이 어디 있느뇨 하며", "19": "티끌을 자기 머리에 뿌리고 울고 애통하여 외쳐 가로되 화 있도다 화 있도다 이 큰 성이여 바다에서 배 부리는 모든 자들이 너의 보배로운 상품을 인하여 치부하였더니 일시간에 망하였도다", "20": "하늘과 성도들과 사도들과 선지자들아 그를 인하여 즐거워하라 하나님이 너희를 신원하시는 심판을 그에게 하셨음이라 하더라", "21": "이에 한 힘센 천사가 큰 맷돌 같은 돌을 들어 바다에 던져 가로되 큰 성 바벨론이 이같이 몹시 떨어져 결코 다시 보이지 아니하리로다", "22": "또 거문고 타는 자와 풍류하는 자와 퉁소 부는 자와 나팔 부는 자들의 소리가 결코 다시 네 가운데서 들리지 아니하고 물론 어떠한 세공업자든지 결코 다시 네 가운데서 보이지 아니하고 또 맷돌 소리가 결코 다시 네 가운데서 들리지 아니하고", "23": "등불 빛이 결코 다시 네 가운데서 비취지 아니하고 신랑과 신부의 음성이 결코 다시 네 가운데서 들리지 아니하리로다 너의 상고들은 땅의 왕족들이라 네 복술을 인하여 만국이 미혹되었도다", "24": "선지자들과 성도들과 및 땅 위에서 죽임을 당한 모든 자의 피가 이 성중에서 보였느니라 하더라"}, "19": {"1": "이 일 후에 내가 들으니 하늘에 허다한 무리의 큰 음성 같은 것이 있어 가로되 할렐루야 구원과 영광과 능력이 우리 하나님께 있도다", "2": "그의 심판은 참되고 의로운지라 음행으로 땅을 더럽게 한 큰 음녀를 심판하사 자기 종들의 피를 그의 손에 갚으셨도다 하고", "3": "두번째 가로되 할렐루야 하더니 그 연기가 세세토록 올라가더라", "4": "또 이십 사 장로와 네 생물이 엎드려 보좌에 앉으신 하나님께 경배하여 가로되 아멘 할렐루야 하니", "5": "보좌에서 음성이 나서 가로되 하나님의 종들 곧 그를 경외하는 너희들아 무론대소하고 다 우리 하나님께 찬송하라 하더라", "6": "또 내가 들으니 허다한 무리의 음성도 같고 많은 물 소리도 같고 큰 뇌성도 같아서 가로되 할렐루야 주 우리 하나님 곧 전능하신 이가 통치하시도다", "7": "우리가 즐거워하고 크게 기뻐하여 그에게 영광을 돌리세 어린 양의 혼인 기약이 이르렀고 그 아내가 예비하였으니", "8": "그에게 허락하사 빛나고 깨끗한 세마포를 입게 하셨은즉 이 세마포는 성도들의 옳은 행실이로다 하더라", "9": "천사가 내게 말하기를 기록하라 어린 양의 혼인 잔치에 청함을 입은 자들이 복이 있도다 하고 또 내게 말하되 이것은 하나님의 참되신 말씀이라 하기로", "10": "내가 그 발 앞에 엎드려 경배하려 하니 그가 나더러 말하기를 나는 너와 및 예수의 증거를 받은 네 형제들과 같이 된 종이니 삼가 그리하지 말고 오직 하나님께 경배하라 예수의 증거는 대언의 영이라 하더라", "11": "또 내가 하늘이 열린 것을 보니 보라 백마와 탄 자가 있으니 그 이름은 충신과 진실이라 그가 공의로 심판하며 싸우더라", "12": "그 눈이 불꽃 같고 그 머리에 많은 면류관이 있고 또 이름 쓴 것이 하나가 있으니 자기 밖에 아는 자가 없고", "13": "또 그가 피 뿌린 옷을 입었는데 그 이름은 하나님의 말씀이라 칭하더라", "14": "하늘에 있는 군대들이 희고 깨끗한 세마포를 입고 백마를 타고 그를 따르더라", "15": "그의 입에서 이한 검이 나오니 그것으로 만국을 치겠고 친히 저희를 철장으로 다스리며 또 친히 하나님 곧 전능하신 이의 맹렬한 진노의 포도주 틀을 밟겠고", "16": "그 옷과 그 다리에 이름 쓴 것이 있으니 만왕의 왕이요 만주의 주라 하였더라", "17": "또 내가 보니 한 천사가 해에 서서 공중에 나는 모든 새를 향하여 큰 음성으로 외쳐 가로되 와서 하나님의 큰 잔치에 모여", "18": "왕들의 고기와 장군들의 고기와 장사들의 고기와 말들과 그 탄 자들의 고기와 자유한 자들이나 종들이나 무론대소하고 모든 자의 고기를 먹으라 하더라", "19": "또 내가 보매 그 짐승과 땅의 임금들과 그 군대들이 모여 그 말 탄 자와 그의 군대로 더불어 전쟁을 일으키다가", "20": "짐승이 잡히고 그 앞에서 이적을 행하던 거짓 선지자도 함께 잡혔으니 이는 짐승의 표를 받고 그의 우상에게 경배하던 자들을 이적으로 미혹하던 자라 이 둘이 산채로 유황불 붙는 못에 던지우고", "21": "그 나머지는 말 탄 자의 입으로 나오는 검에 죽으매 모든 새가 그 고기로 배불리우더라"}, "20": {"1": "또 내가 보매 천사가 무저갱 열쇠와 큰 쇠사슬을 그 손에 가지고 하늘로서 내려와서", "2": "용을 잡으니 곧 옛 뱀이요 마귀요 사단이라 잡아 일천년 동안 결박하여", "3": "무저갱에 던져 잠그고 그 위에 인봉하여 천년이 차도록 다시는 만국을 미혹하지 못하게 하였다가 그 후에는 반드시 잠간 놓이리라", "4": "또 내가 보좌들을 보니 거기 앉은 자들이 있어 심판하는 권세를 받았더라 또 내가 보니 예수의 증거와 하나님의 말씀을 인하여 목 베임을 받은 자의 영혼들과 또 짐승과 그의 우상에게 경배하지도 아니하고 이마와 손에 그의 표를 받지도 아니한 자들이 살아서 그리스도로 더불어 천년 동안 왕노릇 하니", "5": "(그 나머지 죽은 자들은 그 천년이 차기까지 살지 못하더라) 이는 첫째 부활이라", "6": "이 첫째 부활에 참예하는 자들은 복이 있고 거룩하도다 둘째 사망이 그들을 다스리는 권세가 없고 도리어 그들이 하나님과 그리스도의 제사장이 되어 천년 동안 그리스도로 더불어 왕노릇 하리라", "7": "천년이 차매 사단이 그 옥에서 놓여", "8": "나와서 땅의 사방 백성 곧 곡과 마곡을 미혹하고 모아 싸움을 붙이리니 그 수가 바다 모래 같으리라", "9": "저희가 지면에 널리 퍼져 성도들의 진과 사랑하시는 성을 두르매 하늘에서 불이 내려와 저희를 소멸하고", "10": "또 저희를 미혹하는 마귀가 불과 유황 못에 던지우니 거기는 그 짐승과 거짓 선지자도 있어 세세토록 밤낮 괴로움을 받으리라", "11": "또 내가 크고 흰 보좌와 그 위에 앉으신 자를 보니 땅과 하늘이 그 앞에서 피하여 간데 없더라", "12": "또 내가 보니 죽은 자들이 무론 대소하고 그 보좌 앞에 섰는데 책들이 펴 있고 또 다른 책이 펴졌으니 곧 생명책이라 죽은 자들이 자기 행위를 따라 책들에 기록된대로 심판을 받으니", "13": "바다가 그 가운데서 죽은 자들을 내어주고 또 사망과 음부도 그 가운데서 죽은 자들을 내어주매 각 사람이 자기의 행위대로 심판을 받고", "14": "사망과 음부도 불못에 던지우니 이것은 둘째 사망 곧 불못이라", "15": "누구든지 생명책에 기록되지 못한 자는 불못에 던지우더라"}, "21": {"1": "또 내가 새 하늘과 새 땅을 보니 처음 하늘과 처음 땅이 없어졌고 바다도 다시 있지 않더라", "2": "또 내가 보매 거룩한 성 새 예루살렘이 하나님께로부터 하늘에서 내려오니 그 예비한 것이 신부가 남편을 위하여 단장한 것 같더라", "3": "내가 들으니 보좌에서 큰 음성이 나서 가로되 보라 하나님의 장막이 사람들과 함께 있으매 하나님이 저희와 함께 거하시리니 저희는 하나님의 백성이 되고 하나님은 친히 저희와 함께 계셔서", "4": "모든 눈물을 그 눈에서 씻기시매 다시 사망이 없고 애통하는 것이나 곡하는 것이나 아픈 것이 다시 있지 아니하리니 처음 것들이 다 지나갔음이러라", "5": "보좌에 앉으신 이가 가라사대 보라 내가 만물을 새롭게 하노라 하시고 또 가라사대 이 말은 신실하고 참되니 기록하라 하시고", "6": "또 내게 말씀하시되 이루었도다 나는 알파와 오메가요 처음과 나중이라 내가 생명수 샘물로 목 마른 자에게 값 없이 주리니", "7": "이기는 자는 이것들을 유업으로 얻으리라 나는 저의 하나님이 되고 그는 내 아들이 되리라", "8": "그러나 두려워하는 자들과 믿지 아니하는 자들과 흉악한 자들과 살인자들과 행음자들과 술객들과 우상 숭배자들과 모든 거짓말 하는 자들은 불과 유황으로 타는 못에 참예하리니 이것이 둘째 사망이라", "9": "일곱 대접을 가지고 마지막 일곱 재앙을 담은 일곱 천사중 하나가 나아와서 내게 말하여 가로되 이리 오라 내가 신부 곧 어린 양의 아내를 네게 보이리라 하고", "10": "성령으로 나를 데리고 크고 높은 산으로 올라가 하나님께로부터 하늘에서 내려오는 거룩한 성 예루살렘을 보이니", "11": "하나님의 영광이 있으매 그 성의 빛이 지극히 귀한 보석 같고 벽옥과 수정 같이 맑더라", "12": "크고 높은 성곽이 있고 열 두 문이 있는데 문에 열 두 천사가 있고 그 문들 위에 이름을 썼으니 이스라엘 자손 열 두 지파의 이름들이라", "13": "동편에 세 문, 북편에 세 문, 남편에 세 문, 서편에 세 문이니", "14": "그 성에 성곽은 열 두 기초석이 있고 그 위에 어린 양의 십 이 사도의 열 두 이름이 있더라", "15": "내게 말하는 자가 그 성과 그 문들과 성곽을 척량하려고 금 갈대를 가졌더라", "16": "그 성은 네모가 반듯하여 장광이 같은지라 그 갈대로 그 성을 척량하니 일만 이천 스다디온이요 장과 광과 고가 같더라", "17": "그 성곽을 척량하매 일백 사십 사 규빗이니 사람의 척량 곧 천사의 척량이라", "18": "그 성곽은 벽옥으로 쌓였고 그 성은 정금인데 맑은 유리 같더라", "19": "그 성의 성곽의 기초석은 각색 보석으로 꾸몄는데 첫째 기초석은 벽옥이요 둘째는 남보석이요 세째는 옥수요 네째는 녹보석이요", "20": "다섯째는 홍마노요 여섯째는 홍보석이요 일곱째는 황옥이요 여덟째는 녹옥이요 아홉째는 담황옥이요 열째는 비취옥이요 열 한째는 청옥이요 열 둘째는 자정이라", "21": "그 열 두 문은 열 두 진주니 문마다 한 진주요 성의 길은 맑은 유리 같은 정금이더라", "22": "성안에 성전을 내가 보지 못하였으니 이는 주 하나님 곧 전능하신 이와 및 어린 양이 그 성전이심이라", "23": "그 성은 해나 달의 비췸이 쓸데 없으니 이는 하나님의 영광이 비취고 어린 양이 그 등이 되심이라", "24": "만국이 그 빛 가운데로 다니고 땅의 왕들이 자기 영광을 가지고 그리로 들어오리라", "25": "성문들을 낮에 도무지 닫지 아니하리니 거기는 밤이 없음이라", "26": "사람들이 만국의 영광과 존귀를 가지고 그리로 들어오겠고", "27": "무엇이든지 속된 것이나 가증한 일 또는 거짓말 하는 자는 결코 그리로 들어오지 못하되 오직 어린 양의 생명책에 기록된 자들뿐이라"}, "22": {"1": "또 저가 수정 같이 맑은 생명수의 강을 내게 보이니 하나님과 및 어린 양의 보좌로부터 나서", "2": "길 가운데로 흐르더라 강 좌우에 생명 나무가 있어 열 두가지 실과를 맺히되 달마다 그 실과를 맺히고 그 나무 잎사귀들은 만국을 소성하기 위하여 있더라", "3": "다시 저주가 없으며 하나님과 그 어린 양의 보좌가 그 가운데 있으리니 그의 종들이 그를 섬기며", "4": "그의 얼굴을 볼터이요 그의 이름도 저희 이마에 있으리라", "5": "다시 밤이 없겠고 등불과 햇빛이 쓸데 없으니 이는 주 하나님이 저희에게 비취심이라 저희가 세세토록 왕노릇하리로다", "6": "또 그가 내게 말하기를 이 말은 신실하고 참된지라 주 곧 선지자들의 영의 하나님이 그의 종들에게 결코 속히 될 일을 보이시려고 그의 천사를 보내셨도다", "7": "보라 내가 속히 오리니 이 책의 예언의 말씀을 지키는 자가 복이 있으리라 하더라", "8": "이것들을 보고 들은 자는 나 요한이니 내가 듣고 볼 때에 이 일을 내게 보이던 천사의 발 앞에 경배하려고 엎드렸더니", "9": "저가 내게 말하기를 나는 너와 네 형제 선지자들과 또 이 책의 말을 지키는 자들과 함께 된 종이니 그리하지 말고 오직 하나님께 경배하라 하더라", "10": "또 내게 말하되 이 책의 예언의 말씀을 인봉하지 말라 때가 가까우니라", "11": "불의를 하는 자는 그대로 불의를 하고 더러운 자는 그대로 더럽고 의로운 자는 그대로 의를 행하고 거룩한 자는 그대로 거룩되게 하라", "12": "보라 내가 속히 오리니 내가 줄 상이 내게 있어 각 사람에게 그의 일한대로 갚아 주리라", "13": "나는 알파와 오메가요 처음과 나중이요 시작과 끝이라", "14": "그 두루마기를 빠는 자들은 복이 있으니 이는 저희가 생명 나무에 나아가며 문들을 통하여 성에 들어갈 권세를 얻으려 함이로다", "15": "개들과 술객들과 행음자들과 살인자들과 우상 숭배자들과 및 거짓말을 좋아하며 지어내는 자마다 성밖에 있으리라", "16": "나 예수는 교회들을 위하여 내 사자를 보내어 이것들을 너희에게 증거하게 하였노라 나는 다윗의 뿌리요 자손이니 곧 광명한 새벽별이라 하시더라", "17": "성령과 신부가 말씀하시기를 오라 하시는도다 듣는 자도 오라 할 것이요 목마른 자도 올 것이요 또 원하는 자는 값 없이 생명수를 받으라 하시더라", "18": "내가 이 책의 예언의 말씀을 듣는 각인에게 증거하노니 만일 누구든지 이것들 외에 더하면 하나님이 이 책에 기록된 재앙들을 그에게 더하실 터이요", "19": "만일 누구든지 이 책의 예언의 말씀에서 제하여 버리면 하나님이 이 책에 기록된 생명 나무와 및 거룩한 성에 참예함을 제하여 버리시리라", "20": "이것들을 증거하신 이가 가라사대 내가 진실로 속히 오리라 하시거늘 아멘 주 예수여 오시옵소서", "21": "주 예수의 은혜가 모든 자들에게 있을찌어다 아멘"}};</script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');
+const W=540,H=550,SHIP_Y=494,MODES={learn:'학습',blank:'빈칸',recall:'암송'},SPEED={gentle:65,slow:110,normal:205,fast:270,turbo:335};
+const raw=window.BIBLE||FALLBACK_BIBLE;
+const Bible=Object.fromEntries(Object.entries(raw).filter(([c,vs])=>+c>=1&&+c<=22&&vs&&typeof vs==='object').map(([c,vs])=>[c,Object.entries(vs).filter(([v,t])=>Number.isInteger(+v)&&+v>0&&typeof t==='string'&&t.trim()).map(([v,t])=>({num:+v,text:t})).sort((a,b)=>a.num-b.num)]).filter(([,vs])=>vs.length));
+let selected=+Object.keys(Bible)[0],phase='menu',resumePhase='playing',run=null,idx=0,words=[],target=0,wave=[],shipX=W/2,aim=W/2,score=0,combo=0,maxCombo=0,shield=0,retries=0,elapsed=0,misses=new Set(),verseEarned=new Map(),parts=[],beams=[],meteors=[],feedback='',feedbackLeft=0,delay=0,cooldown=0,invincible=0,meteorClock=1.2,bossHP=0,bossAnswer='',bossPrompt='',bossRound=0,completed=0;
+let stormClock=14,stormWarning=0,stormLanes=[],stormActive=false,bossX=270,bossAge=0,bossFlash=0;let bossMaxHP=300;
+let bossPower=1,bossPickups=[],pickupClock=1,bossQuiz="",stormRemaining=0,lastStormLane=-1;
+let mobs=[],mobClock=1,meteorSequenceTime=-1,meteorWarnings=[];
+let assessment=null,testHits=0,testErrors=0;
+const PRESETS={beginner:{name:'초급',speed:'slow',mode:'learn',meteorPattern:'straight',meteorRatio:'0.8',stormFrequency:'0',stormBoost:'1.5',mobLimit:'1',mobInterval:'6'},intermediate:{name:'중급',speed:'normal',mode:'learn',meteorPattern:'straight',meteorRatio:'1.5',stormFrequency:'30',stormBoost:'2',mobLimit:'2',mobInterval:'4'},advanced:{name:'고급',speed:'fast',mode:'recall',meteorPattern:'straight',meteorRatio:'2',stormFrequency:'30',stormBoost:'2.5',mobLimit:'4',mobInterval:'2.5'}};
+function applyPreset(level){$('difficultyPreset').value=level;const p=PRESETS[level];if(p)for(const id of ['speed','mode','meteorPattern','meteorRatio','stormFrequency','stormBoost','mobInterval','mobLimit'])$(id).value=p[id];$('presetNote').textContent=p?p.name+' 설정 적용 · 세부 값을 바꾸면 커스텀으로 전환됩니다.':'원하는 속도와 장애물을 직접 조절하세요.';updateMode();}
+function customSetting(){ $('difficultyPreset').value='custom';$('presetNote').textContent='커스텀 · 직접 조절한 설정';updateMode();}
+function startAssessment(){assessment={round:0,results:[]};startTestRound();}
+function startTestRound(){applyPreset(['beginner','intermediate','advanced'][assessment.round]);$('mode').value='learn';testHits=0;testErrors=0;const list=Bible[selected].slice(0,5);start(list,'learn');notice('테스트 '+(assessment.round+1)+'/3 · 30초 동안 정답을 먹고 피하세요');}
+function endTestRound(){
+ if(!assessment)return;drops=[];assessment.results.push({hits:testHits,errors:testErrors});phase='testResult';clearInput();playerShots=[];mobs=[];meteors=[];cancelStorm();showPanel('testResult');
+ $('testMetrics').textContent='정답 '+testHits+'개 · 실수 '+testErrors+'회';
+ if(assessment.round<2){$('testTitle').textContent='테스트 '+(assessment.round+1)+'/3 완료';$('testDetail').textContent='다음 판에서는 속도와 장애물 난이도가 올라갑니다.';$('testNext').textContent='다음 테스트 시작';$('testNext').onclick=()=>{assessment.round++;startTestRound();};}
+ else{
+ const r=assessment.results,level=r[2].hits>=12&&r[2].errors<=2&&r[1].hits>=10&&r[1].errors<=3?'advanced':r[1].hits>=6&&r[1].errors<=5?'intermediate':'beginner';applyPreset(level);
+ $('testTitle').textContent=PRESETS[level].name+' 난이도를 적용했어요';$('testDetail').textContent=r.map((v,i)=>(i+1)+'판: 정답 '+v.hits+' / 실수 '+v.errors).join(' · ')+' — 힌트가 있는 조작 테스트 기준입니다. 설정은 언제든 바꿀 수 있습니다.';
+ $('recommendNote').textContent='3판 테스트 추천: '+PRESETS[level].name+' · 자동 적용 완료';$('testNext').textContent='추천 설정으로 시작';$('testNext').onclick=()=>{assessment=null;start();};assessment=null;
+ }
+}
+const SHIPS={
+ scout:{name:'루멘',tag:'기본형',cost:0,damage:1,move:1,interval:1,shield:0,capacity:2,color:'#abcdd2',width:1,skill:20,desc:'공격 ×1.0 · 기동 ×1.0<br>20초마다 3초 운석 차단'},
+ swift:{name:'제피르',tag:'기동형',cost:200,damage:.9,move:1.3,interval:.9,shield:0,capacity:2,color:'#8ae4ed',width:.85,skill:18,desc:'공격 ×0.9 · 기동 ×1.3<br>18초마다 1.2초 회피 보호'},
+ aegis:{name:'이지스',tag:'방어형',cost:350,damage:1,move:.9,interval:1,shield:2,capacity:3,color:'#a5b4ff',width:1.13,skill:22,desc:'공격 ×1.0 · 기동 ×0.9<br>보호막 2개 출발 · 22초마다 1개 회복'},
+ striker:{name:'노바',tag:'공격형',cost:500,damage:1.45,move:1,interval:1.15,shield:0,capacity:2,color:'#f1b183',width:1.04,skill:20,desc:'공격 ×1.45 · 기동 ×1.0<br>20초마다 3초 화력 3배'}
+};
+const PROFILE_KEY='orbit_hangar_v1';let storageOK=true;
+function readProfile(){try{const raw=localStorage.getItem(PROFILE_KEY);if(!raw)return {gold:0,owned:['scout'],selected:'scout',weaponLevel:1,fireLevel:1,auxLevels:{},auxOwned:[],aux:'none'};const p=JSON.parse(raw),owned=[...new Set(['scout',...(Array.isArray(p.owned)?p.owned.filter(id=>Object.hasOwn(SHIPS,id)):[])])];return {gold:Number.isSafeInteger(p.gold)&&p.gold>=0?Math.min(p.gold,1e9):0,owned,selected:owned.includes(p.selected)?p.selected:'scout',weaponLevel:Number.isInteger(p.weaponLevel)?Math.max(1,Math.min(20,p.weaponLevel)):1,fireLevel:Number.isInteger(p.fireLevel)?Math.max(1,Math.min(15,p.fireLevel)):1,auxLevels:Object.fromEntries(['collector','gunner','guard'].map(id=>[id,Number.isInteger(p.auxLevels?.[id])?Math.max(1,Math.min(10,p.auxLevels[id])):1])),auxOwned:Array.isArray(p.auxOwned)?[...new Set(p.auxOwned.filter(x=>['collector','gunner','guard'].includes(x)))]:[],aux:Array.isArray(p.auxOwned)&&p.auxOwned.includes(p.aux)&&['collector','gunner','guard'].includes(p.aux)?p.aux:'none'};}catch{storageOK=false;return {gold:0,owned:['scout'],selected:'scout',weaponLevel:1,fireLevel:1,auxLevels:{},auxOwned:[],aux:'none'};}}
+let shieldPulse=0,skillClock=20,lightningFX=[];
+let profile=readProfile(),drops=[],goldClock=.8,itemClock=9,buffs={calm:0,power:0,phase:0},runGold=0,rewardedWords=new Set(),rewardedVerses=new Set(),rewardedBoss=false,bossRewardSerial=0,finishRewarded=false;
+const AUX={collector:{name:'수집기',cost:350,color:'#efc46f',interval:.65,damage:.35,desc:'보상 보석 상시 흡수 · 작은 탄환 자동 발사'},gunner:{name:'연사포',cost:600,color:'#f5a27d',interval:.22,damage:.55,desc:'빠른 연사로 잡몹과 보스 공격'},guard:{name:'방어기',cost:500,color:'#a9c7ff',interval:.9,damage:.25,desc:'작은 탄환 발사 · 25초마다 보호막 1개 회복'}};
+let auxClock=.5,auxShieldClock=25;
+function weaponLevel(){return run?run.weaponLevel:profile.weaponLevel;}
+function streamCount(){return weaponLevel()>=9?5:weaponLevel()>=5?3:1;}
+function upgradeCost(){return 80+(profile.weaponLevel-1)*40;}
+function upgradeWeapon(){if(phase!=='menu'||profile.weaponLevel>=20||profile.gold<upgradeCost())return;profile.gold-=upgradeCost();profile.weaponLevel++;saveProfile();renderHangar();}
+function equipAux(id){if(phase!=='menu'||(id!=='none'&&!AUX[id]))return;if(id!=='none'&&!profile.auxOwned.includes(id)){if(profile.gold<AUX[id].cost)return;profile.gold-=AUX[id].cost;profile.auxOwned.push(id);}profile.aux=id;saveProfile();renderHangar();}
+let previewAux='collector',auxScroll=0;
+function fireRate(){return 1+((run?run.fireLevel:profile.fireLevel)-1)*.07;}
+function auxLevel(){return run?.auxLevel||1;}
+function fireCost(){return 100+(profile.fireLevel-1)*50;}
+function upgradeFire(){if(phase!=='menu'||profile.fireLevel>=15||profile.gold<fireCost())return;profile.gold-=fireCost();profile.fireLevel++;saveProfile();renderHangar();}
+function auxCost(id){return 100+(profile.auxLevels[id]||1)*60;}
+function upgradeAux(id){if(phase!=='menu'||!AUX[id]||!profile.auxOwned.includes(id)||(profile.auxLevels[id]||1)>=10||profile.gold<auxCost(id))return;profile.gold-=auxCost(id);profile.auxLevels[id]=(profile.auxLevels[id]||1)+1;saveProfile();renderHangar();}
+function auxIcon(id,color){const symbol=id==='collector'?'<path d="M22 18v20a10 10 0 0020 0V18M18 18h8m12 0h8"/>':id==='gunner'?'<path d="M23 14v30m9-36v36m9-30v30M18 46h28l-5 10H23z"/>':id==='guard'?'<path d="M32 10l19 8-4 24-15 14-15-14-4-24zM24 32l6 6 12-14"/>':'<circle cx="32" cy="32" r="20"/><path d="M18 18l28 28"/>';return `<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${symbol}</g></svg>`;}
+function renderArmory(){
+ const host=$('armory');host.replaceChildren();
+ const grid=document.createElement('div');grid.className='upgrade-grid';
+ for(const type of ['power','fire']){const power=type==='power',lv=power?profile.weaponLevel:profile.fireLevel,max=power?20:15,cost=power?upgradeCost():fireCost(),card=document.createElement('div');card.className='upgrade-card';card.innerHTML=`<b>${power?'공격력':'공격속도'} <small>Lv.${lv} / ${max}</small></b><p>${power?'×'+(1+(lv-1)*.12).toFixed(2)+' · '+(lv>=9?5:lv>=5?3:1)+'줄 발사':'연사 속도 ×'+(1+(lv-1)*.07).toFixed(2)}</p>`;const button=document.createElement('button');button.textContent=lv>=max?'최고 레벨':cost+' G 강화';button.disabled=lv>=max||profile.gold<cost;button.onclick=power?upgradeWeapon:upgradeFire;card.append(button);grid.append(card);}host.append(grid);
+ const note=document.createElement('p');note.className='options-note';note.textContent='공격력 Lv.5: 3줄 · Lv.9: 5줄 · Lv.11: 일반 운석 파괴. 공격속도는 단계당 +7%, 최대 +98%. 경고 메테오는 파괴 불가.';host.append(note);
+ const title=document.createElement('p');title.className='aux-heading';title.textContent='보조무기 · 옆으로 넘겨 선택 →';host.append(title);
+ const rail=document.createElement('div');rail.className='aux-rail';rail.setAttribute('aria-label','보조무기 선택');rail.onscroll=()=>{auxScroll=rail.scrollLeft;};
+ for(const id of ['collector','gunner','guard','none']){const c=AUX[id],owned=id==='none'||profile.auxOwned.includes(id),card=document.createElement('button');card.className='aux-tile'+(previewAux===id?' selected':'');card.type='button';card.setAttribute('aria-pressed',String(previewAux===id));card.innerHTML=auxIcon(id,c?.color||'#9ba9b8')+`<b>${c?.name||'미장착'}</b><span>${id==='none'?'장비 해제':profile.aux===id?'장착 중 · Lv.'+(profile.auxLevels[id]||1):owned?'보유 · Lv.'+(profile.auxLevels[id]||1):c.cost+' G'}</span>`;card.onclick=()=>{previewAux=id;renderArmory();};rail.append(card);}host.append(rail);rail.scrollLeft=auxScroll;
+ const id=previewAux,c=AUX[id],detail=document.createElement('div');detail.className='aux-detail';
+ if(c){const lv=profile.auxLevels[id]||1,owned=profile.auxOwned.includes(id);const info=document.createElement('p');info.innerHTML=`<b>${c.name} · Lv.${lv}</b><br>${c.desc}<br><small>보조탄 공격 ×${(1+(lv-1)*.1).toFixed(1)} · 연사 ×${(1+(lv-1)*.06).toFixed(2)}${id==='collector'?' · 흡수 범위 '+(180+(lv-1)*10):id==='guard'?' · 보호막 '+(25-(lv-1))+'초마다':''}</small>`;detail.append(info);
+ const actions=document.createElement('div');actions.className='row';const equip=document.createElement('button');equip.textContent=profile.aux===id?'장착 중':owned?'장착하기':c.cost+' G 구매·장착';equip.disabled=profile.aux===id||(!owned&&profile.gold<c.cost);equip.onclick=()=>equipAux(id);actions.append(equip);if(owned){const up=document.createElement('button');up.textContent=lv>=10?'최고 레벨':auxCost(id)+' G 강화';up.disabled=lv>=10||profile.gold<auxCost(id);up.onclick=()=>upgradeAux(id);actions.append(up);}detail.append(actions);
+ }else{const off=document.createElement('button');off.textContent='보조무기 해제';off.disabled=profile.aux==='none';off.onclick=()=>equipAux('none');detail.append(off);}host.append(detail);
+}
+function fireMain(){const count=streamCount();for(let i=0;i<count;i++)playerShots.push({x:shipX+(i-(count-1)/2)*13,y:shipY-34,damage:effectivePower(),canWord:i===(count-1)/2});}
+function updateAux(dt){
+ const c=AUX[run?.aux];if(!c||assessment)return;auxClock-=dt;
+ if(auxClock<=0){auxClock=c.interval/(1+(auxLevel()-1)*.06);playerShots.push({x:shipX-45,y:shipY-8,damage:effectivePower()*c.damage*(1+(auxLevel()-1)*.1),canWord:false,aux:true,color:c.color});}
+ if(run.aux==='guard'){auxShieldClock-=dt;if(auxShieldClock<=0){auxShieldClock=25-(auxLevel()-1);shield=Math.min(shipStats().capacity,shield+1);shieldPulse=1;notice('방어기 · 보호막 회복');updateHUD();}}
+}
+function shipStats(){return SHIPS[run?.ship||profile.selected]||SHIPS.scout;}
+function shotWidth(shot){
+ const power=Math.max(1,Number(shot.damage)||1);
+ return shot.aux?Math.min(3.8,2+Math.log2(power)*.45):Math.min(8,3+Math.log2(power)*1.1);
+}
+function effectivePower(){return Math.round(bossPower*shipStats().damage*(1+(weaponLevel()-1)*.12)*(buffs.power>0?3:1)*100)/100;}
+function saveProfile(){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));storageOK=true;}catch{storageOK=false;}$('saveNote').textContent=storageOK?'골드·보유 기체 자동 저장 · 같은 브라우저와 주소에서 유지':'저장 불가 · 이번 실행 동안만 골드와 기체가 유지됩니다.';}
+function addGold(amount){if(assessment||!Number.isFinite(amount)||amount<=0)return;const next=Math.min(1e9,profile.gold+Math.floor(amount));runGold+=next-profile.gold;profile.gold=next;saveProfile();$('goldHUD').textContent=profile.gold;$('walletGold').textContent=profile.gold+' G';}
+let previewShip=null;
+function renderHangar(){
+ $('walletGold').textContent=profile.gold+' G';$('saveNote').textContent=storageOK?'골드와 보유 기체는 자동 저장됩니다.':'저장 불가 · 이번 실행 동안만 유지됩니다.';
+ renderArmory();const host=$('shipGrid');host.replaceChildren();
+ const current=previewShip&&SHIPS[previewShip]?previewShip:profile.selected;
+ for(const [id,c] of Object.entries(SHIPS)){
+  const owned=profile.owned.includes(id),selected=profile.selected===id,card=document.createElement('button');card.type='button';card.className='ship-card'+(current===id?' selected':'');card.setAttribute('aria-pressed',String(current===id));
+  card.innerHTML=`<svg viewBox="0 0 120 90" aria-hidden="true"><g transform="translate(60 40) scale(${c.width} .85)"><path d="M0-34L9-3L34 28L10 20L0 28L-10 20L-34 28L-9-3Z" fill="${c.color}" stroke="#d8fbef"/><path d="M0-21L5-4L3 10L-3 10L-5-4Z" fill="#153a4d"/><path d="M-4 29L0 48L4 29" fill="#e9b967"/></g></svg><strong>${c.name}</strong><span>${selected?'사용 중':owned?'보유':c.cost+' G'}</span>`;
+  card.onclick=()=>{previewShip=id;renderHangar();};host.append(card);
+ }
+ const c=SHIPS[current],owned=profile.owned.includes(current),active=profile.selected===current,detail=$('shipDetail');detail.replaceChildren();
+ const description=document.createElement('div');description.innerHTML=`<b>${c.name} <small>${c.tag}</small></b><p>${c.desc}</p>`;detail.append(description);
+ const action=document.createElement('button');action.textContent=active?'사용 중':owned?'선택':c.cost+' G 구매';action.disabled=active||(!owned&&profile.gold<c.cost);action.onclick=()=>buyShip(current);detail.append(action);
+}
+function buyShip(id){
+ if(phase!=='menu'||!Object.hasOwn(SHIPS,id))return false;
+ const c=SHIPS[id];if(!profile.owned.includes(id)){if(profile.gold<c.cost){$('shopNotice').textContent='골드가 부족합니다.';return false;}profile.gold-=c.cost;profile.owned.push(id);}
+ profile.selected=id;previewShip=id;saveProfile();renderHangar();$('shopNotice').textContent=c.name+' 선택 완료 · 다음 출격에 적용됩니다.';return true;
+}
+const ITEM_INFO={phase:{label:'장애물 숨김',symbol:'◇',color:'#b8a5ff'},lightning:{label:'번개',symbol:'ϟ',color:'#a7dcff'},calm:{label:'운석 차단',symbol:'⛨',color:'#9edfe9'},power:{label:'화력 3배',symbol:'⚡',color:'#ffb186'},shield:{label:'보호막',symbol:'◆',color:'#b7b5ff'}};
+function spawnGold(x,y,value=2){
+ if(assessment||drops.length>=80)return;
+ const roll=Math.random();const jewel=roll<.55?{type:'ruby',name:'루비',value:1,color:'#ff3155',light:'#ff9bad'}:roll<.80?{type:'sapphire',name:'사파이어',value:3,color:'#348cff',light:'#a8d5ff'}:roll<.92?{type:'emerald',name:'에메랄드',value:5,color:'#20d887',light:'#a5ffd8'}:roll<.98?{type:'amethyst',name:'자수정',value:10,color:'#b35cff',light:'#e2b5ff'}:{type:'diamond',name:'다이아',value:30,color:'#dffcff',light:'#ffffff'};
+ drops.push({kind:'gold',jewelType:jewel.type,jewelName:jewel.name,jewelColor:jewel.color,jewelLight:jewel.light,x:clamp(x,28,W-28),y:clamp(y,-260,H-30),vx:(Math.random()-.5)*45,vy:-(220+Math.random()*50),value:jewel.value,r:14,spin:Math.random()*Math.PI*2,spinSpeed:(Math.random()>.5?1:-1)*(7+Math.random()*5),popLife:.38});
+}
+function spawnItem(x=50+Math.random()*(W-100),y=-25,kind=null){if(assessment||drops.filter(d=>!['gold','gem'].includes(d.kind)).length>=3)return;const available=phase==='boss'?['power','shield']:['calm','power','shield'];if(run.mode!=='learn'){available.push('lightning');if(phase!=='boss')available.push('phase');}kind=kind&&available.includes(kind)?kind:available[Math.floor(Math.random()*available.length)];drops.push({kind,x:clamp(x,36,W-36),y:clamp(y,-100,H-45),r:27});}
+function applyItem(kind){
+ if(kind==='calm'){buffs.calm=10;meteors=[];cancelStorm();stormClock=Math.max(stormClock,3);meteorClock=1.3;notice('운석 차단 · 10초 동안 안전한 암송');}
+ else if(kind==='power'){buffs.power=8;notice('화력 증폭 · 8초간 공격력 3배');}
+ else if(kind==='phase'&&run.mode!=='learn'){buffs.phase=.5;notice('0.5초 · 운석과 잡몹 숨김');}
+ else if(kind==='lightning'&&run.mode!=='learn'){strikeLightning();}
+ else if(kind==='shield'){shieldPulse=1;shield=Math.min(shipStats().capacity,shield+1);notice('보호막 +1');}
+ particle(shipX,shipY,ITEM_INFO[kind]?.color||'#fff',22);beep('clear');updateHUD();
+}
+function rewardWord(){
+ if(assessment)return;const key=run.chapter+':'+run.list[idx].num+':'+target;if(rewardedWords.has(key))return;rewardedWords.add(key);
+ const curWord=wave.find(b=>b.correct&&b.index===target);const gx=curWord?curWord.x+curWord.w/2:shipX,gy=curWord?curWord.y+curWord.h/2:shipY-100;if(Math.random()<.15)spawnGoldBurst(gx,gy,1);tryRewardItem(.04);
+}
+function rewardVerse(){if(assessment)return;const key=run.chapter+':'+run.list[idx].num;if(rewardedVerses.has(key))return;rewardedVerses.add(key);addGold(10);}
+function updateBuffHUD(){const active=[];if(buffs.calm>0)active.push('운석 차단 '+buffs.calm.toFixed(1)+'초');if(buffs.power>0)active.push('화력 3배 '+buffs.power.toFixed(1)+'초');if(buffs.phase>0)active.push('장애물 숨김 '+buffs.phase.toFixed(1)+'초');$('buffHUD').textContent=active.join(' · ')+(run&&!assessment?' · '+shipStats().name+' 능력 '+Math.ceil(skillClock)+'초':'');}
+function updateLoot(dt){
+ const wasHidden=buffs.phase>0;for(const key of Object.keys(buffs))buffs[key]=Math.max(0,buffs[key]-dt);if(wasHidden&&buffs.phase===0)invincible=Math.max(invincible,.3);shieldPulse=Math.max(0,shieldPulse-dt);for(const fx of lightningFX)fx.life-=dt;lightningFX=lightningFX.filter(f=>f.life>0);
+ if(assessment){updateBuffHUD();return;}
+ itemClock=Math.max(0,itemClock-dt);
+ for(const d of drops){
+  const oldX=d.x,oldY=d.y;if(d.kind==='gold'&&d.vy!==undefined){d.x+=d.vx*dt;d.y+=d.vy*dt;d.vy+=620*dt;d.vx*=Math.pow(.45,dt);d.spin=(d.spin||0)+(d.spinSpeed||8)*dt;d.popLife=Math.max(0,(d.popLife||0)-dt);d.x=clamp(d.x,28,W-28);}else d.y+=Math.max(80,run.speed*.65)*dt;
+  const distance=Math.hypot(shipX-d.x,shipY-d.y);
+  if(run.aux==='collector'&&d.kind==='gold'&&distance<180+(auxLevel()-1)*10){const pull=Math.min(distance,420*dt);d.x+=(shipX-d.x)/(distance||1)*pull;d.y+=(shipY-d.y)/(distance||1)*pull;}
+  if(segmentDistance(shipX,shipY,oldX,oldY,d.x,d.y)<d.r+14){d.taken=true;if(d.kind==='gold'||d.kind==='gem'){addGold(d.value);particle(shipX,shipY,d.kind==='gem'?'#86f4ff':d.jewelColor,d.kind==='gem'?24:14);if(d.kind==='gold'){notice(d.jewelName+' 획득 · +'+d.value+' G');beep(d.value>=10?'clear':'ok');}if(d.kind==='gem'){notice('보석 획득 · +50 G');beep('clear');}}else applyItem(d.kind);}
+ }
+ drops=drops.filter(d=>!d.taken&&d.y<H+35);updateAutoSkill(dt);updateBuffHUD();$('powerHUD').textContent='×'+effectivePower().toFixed(1);
+}
+function spawnGoldBurst(x,y,count){if(assessment)return;spawnGold(x,y,1);}
+function tryRewardItem(chance){if(assessment||itemClock>0)return;if(Math.random()<chance){spawnItem();itemClock=18;}}
+function rewardMob(x,y){shockwaves.push({x,y,life:.5});spawnGem(x);tryRewardItem(.12);}
+function spawnGem(x){if(assessment)return;drops.push({kind:'gem',x:clamp(x,35,W-35),y:-38,value:50,r:25});}
+function updateAutoSkill(dt){
+ if(assessment||!['playing','boss'].includes(phase))return;
+ skillClock-=dt;if(skillClock>0)return;skillClock=shipStats().skill;
+ switch(run.ship){
+ case 'scout':buffs.calm=Math.max(buffs.calm,3);meteors=[];cancelStorm();meteorClock=1.3;notice('루멘 · 3초간 운석 차단');break;
+ case 'swift':invincible=Math.max(invincible,1.2);shieldPulse=1;notice('제피르 자동 능력 · 1.2초 회피 보호');break;
+ case 'aegis':shield=Math.min(shipStats().capacity,shield+1);shieldPulse=1;notice('이지스 자동 능력 · 보호막 회복');break;
+ case 'striker':buffs.power=Math.max(buffs.power,3);notice('노바 자동 능력 · 3초 화력 3배');break;
+ }
+ beep('clear');updateHUD();
+}
+function lightningBolt(x,y){
+ const points=[{x:W/2,y:0}];for(let i=1;i<7;i++)points.push({x:W/2+(x-W/2)*i/7+(Math.random()-.5)*35,y:y*i/7});points.push({x,y});lightningFX.push({points,life:.45});
+}
+function strikeLightning(){
+ const damage=30*shipStats().damage;let hits=0;
+ for(const m of mobs){lightningBolt(m.x,m.y);m.hp=Math.max(0,m.hp-damage);hits++;if(m.hp===0){score+=m.reward;rewardMob(m.x,m.y);particle(m.x,m.y,'#bde9ff',28);}}
+ mobs=mobs.filter(m=>m.hp>0);
+ for(const m of meteors){if(m.storm||weaponLevel()<11)continue;lightningBolt(m.x,m.y);particle(m.x,m.y,'#bde9ff',15);hits++;}
+ meteors=meteors.filter(m=>m.storm||weaponLevel()<11);enemyBullets=[];
+ if(phase==='boss'){lightningBolt(bossX,65);damageBoss(damage);hits++;}
+ if(!hits)lightningBolt(shipX,Math.max(100,shipY-100));notice('번개 공격 · 적과 일반 운석 타격');beep('boss');updateHUD();
+}
+function drawLightning(){
+ for(const fx of lightningFX){ctx.save();ctx.globalAlpha=Math.max(0,fx.life/.45);ctx.strokeStyle='#94cfff';ctx.shadowColor='#6ab7ff';ctx.shadowBlur=18;ctx.lineWidth=6;ctx.beginPath();fx.points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.shadowBlur=0;ctx.lineWidth=2;ctx.strokeStyle='#f0fbff';ctx.stroke();ctx.restore();}
+}
+
+// Large illustrated pickups, drawn sharply at every screen resolution.
+function drawDrops(){
+ for(const d of drops){ctx.save();ctx.translate(d.x,d.y);ctx.textAlign='center';ctx.textBaseline='middle';
+ if(d.kind==='gold'){
+ const pop=d.popLife>0?1+Math.sin((1-d.popLife/.38)*Math.PI)*.45:1;ctx.scale(pop,pop);ctx.scale(Math.max(.45,Math.abs(Math.cos(d.spin||0))),1);
+ const color=d.jewelColor||'#ff3155',light=d.jewelLight||'#ff9bad';ctx.shadowColor=color;ctx.shadowBlur=d.vy<0?28:16;ctx.lineWidth=2;ctx.strokeStyle=light;const g=ctx.createLinearGradient(-18,-22,18,24);g.addColorStop(0,light);g.addColorStop(.35,color);g.addColorStop(1,'#3b1020');ctx.fillStyle=g;
+ const shapes={ruby:[[-15,-16],[15,-16],[22,-5],[0,25],[-22,-5]],sapphire:[[0,-25],[19,-7],[14,15],[0,25],[-14,15],[-19,-7]],emerald:[[-12,-23],[12,-23],[21,-14],[21,14],[12,23],[-12,23],[-21,14],[-21,-14]],amethyst:[[0,-27],[18,-8],[13,19],[0,25],[-13,19],[-18,-8]],diamond:[[-22,-9],[-12,-22],[12,-22],[22,-9],[0,26]]};ctx.beginPath();(shapes[d.jewelType]||shapes.ruby).forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.globalAlpha=.65;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,-18);ctx.lineTo(0,20);ctx.moveTo(-15,-7);ctx.lineTo(0,20);ctx.lineTo(15,-7);ctx.moveTo(-15,-7);ctx.lineTo(15,-7);ctx.stroke();ctx.globalAlpha=.9;ctx.fillStyle='#fff';ctx.beginPath();ctx.ellipse(-7,-10,3,6,-.6,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.font='900 11px system-ui';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(d.value+'G',0,37);ctx.shadowBlur=0;
+ }else if(d.kind==='gem'){
+  ctx.shadowColor='#57dcff';ctx.shadowBlur=20;ctx.lineWidth=2;ctx.strokeStyle='#dbfbff';
+  const poly=(points,color)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();ctx.stroke();};
+  poly([[-26,-8],[-14,-24],[14,-24],[26,-8],[0,26]],'#249cdb');ctx.shadowBlur=0;
+  poly([[-14,-24],[14,-24],[10,-8],[-10,-8]],'#bbfbff');poly([[-26,-8],[-10,-8],[0,26]],'#38c2ee');poly([[-10,-8],[10,-8],[0,26]],'#8df3ff');poly([[10,-8],[26,-8],[0,26]],'#137cbe');
+  ctx.font='bold 12px system-ui';ctx.fillStyle='#dcfcff';ctx.fillText('50 G',0,42);
+ }else{
+  const info=ITEM_INFO[d.kind];ctx.shadowColor=info.color;ctx.shadowBlur=15;
+  const g=ctx.createLinearGradient(0,-29,0,29);g.addColorStop(0,'#35475e');g.addColorStop(1,'#0a1628');ctx.fillStyle=g;ctx.strokeStyle=info.color;ctx.lineWidth=2.5;ctx.beginPath();ctx.roundRect(-29,-29,58,58,15);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+  ctx.strokeStyle=info.color;ctx.fillStyle=info.color;ctx.lineWidth=4;ctx.lineCap='round';ctx.lineJoin='round';
+  if(d.kind==='shield'||d.kind==='calm'){ctx.beginPath();ctx.moveTo(0,-18);ctx.lineTo(16,-11);ctx.lineTo(13,6);ctx.quadraticCurveTo(8,16,0,20);ctx.quadraticCurveTo(-8,16,-13,6);ctx.lineTo(-16,-11);ctx.closePath();ctx.stroke();if(d.kind==='calm'){ctx.beginPath();ctx.moveTo(-7,-5);ctx.lineTo(7,7);ctx.stroke();}}
+  else if(d.kind==='lightning'||d.kind==='power'){ctx.beginPath();ctx.moveTo(5,-21);ctx.lineTo(-14,3);ctx.lineTo(-2,3);ctx.lineTo(-7,22);ctx.lineTo(16,-5);ctx.lineTo(3,-5);ctx.closePath();ctx.fill();}
+  else{ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.font='bold 15px system-ui';ctx.fillText('0.5',0,0);}
+  ctx.font='bold 12px system-ui';ctx.fillStyle='#edf7ff';ctx.fillText(info.label,0,-40);
+ }
+ ctx.restore();}
+}
+
+let fireRequests=0;
+let playerShots=[],shotClock=0,overdrive=0,shockwaves=[],shotCount=0;
+let wrongAllowance=3,wrongGrace=0,enemyBullets=[],bulletClock=1.4;
+let shipY=435,aimY=435,bank=0,flightTime=0,rowClock=0,trail=[];
+let lastTime=0,keys=new Set(),heldDir=0,pointer=null,AC=null;
+const stars=Array.from({length:60},()=>({x:Math.random()*W,y:Math.random()*H,r:.5+Math.random()*1.3,s:8+Math.random()*20}));
+function esc(s){return String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function beep(kind){try{AC??=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume().catch(()=>{});const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=kind==='bad'?130:kind==='boss'?290:kind==='clear'?880:650;g.gain.setValueAtTime(.05,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.12);o.start();o.stop(AC.currentTime+.13);}catch{}}
+function notice(t){feedback=t;feedbackLeft=2;}
+function particle(x,y,color,n=15){for(let i=0;i<n;i++)parts.push({x,y,vx:(Math.random()-.5)*190,vy:(Math.random()-.5)*190,life:.6,color});}
+function clearInput(){fireRequests=0;keys.clear();heldDir=0;pointer=null;}
+function showPanel(id){for(const p of ['menu','review','pause','result','testResult','difficultyChoice'])$(p).classList.toggle('hidden',p!==id);}
+function resize(){const r=$('field').getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(r.width*dpr));canvas.height=Math.max(1,Math.floor(r.height*dpr));}
+function buildMenu(){renderHangar();const host=$('chapterGrid');host.replaceChildren();for(const c of Object.keys(Bible)){const b=document.createElement('button');b.textContent=c+'장';b.className=+c===selected?'selected':'';b.onclick=()=>{selected=+c;buildMenu();};host.append(b);}const v=$('startVerse');v.replaceChildren();for(const verse of Bible[selected]||[]){const o=document.createElement('option');o.value=verse.num;o.textContent=verse.num+'절';v.append(o);}$('startBtn').disabled=!selected;updateMode();}
+function wordFallSpeed(){return run.speed*(isShooter()?.62:phase==='boss'?.8:1);}
+function isShooter(){return false;}
+function updateStyle(){$('startBtn').textContent='출격하기';}
+function updateMode(){updateStyle();const m=$('mode').value;$('modeDesc').textContent={learn:'정답과 전체 문장을 보며 익혀요. 틀려도 그 단어부터 이어갑니다.',blank:'현재 단어는 빈칸, 앞뒤 문맥은 보여요. 틀리면 정답을 잠깐 확인합니다.',recall:'완성한 문구만 보여요. 틀리면 해당 절 처음부터 다시 도전합니다.'}[m];$('startVerse').disabled=$('range').value==='full';}
+function start(custom=null,overrideMode=null){const mode=overrideMode||$('mode').value;let list=custom?custom.map(v=>({...v})):Bible[selected]?.map(v=>({...v}));if(!list?.length)return;if(!custom&&$('range').value!=='full'){const begin=list.findIndex(v=>v.num===+$('startVerse').value);list=list.slice(Math.max(0,begin),Math.max(0,begin)+5);}run={fireLevel:assessment?1:profile.fireLevel,auxLevel:assessment?1:(profile.auxLevels[profile.aux]||1),weaponLevel:assessment?1:profile.weaponLevel,aux:assessment?'none':profile.aux,chapter:selected,mode,ship:assessment?'scout':profile.selected,meteorPattern:$('meteorPattern').value==='zigzag'?'zigzag':'straight',mobLimit:clamp(Number($('mobLimit').value)||0,0,6),mobInterval:clamp(Number($('mobInterval').value)||4,.8,8),style:'flight',stormFrequency:$('stormFrequency').value==='0'?0:30,stormBoost:clamp(Number($('stormBoost').value)||2,1.5,2.5),meteorRatio:clamp(Number($('meteorRatio').value)||1.5,.8,2.5),speed:SPEED[$('speed').value]||205,list};run.difficultyScale=1;run.basePace=run.speed;run.baseMobInterval=run.mobInterval;bossMaxHP=300;idx=0;auxClock=.5;auxShieldClock=25;drops=[];goldClock=.8;itemClock=9;skillClock=shipStats().skill;shieldPulse=shipStats().shield?1:0;lightningFX=[];buffs={calm:0,power:0,phase:0};runGold=0;rewardedWords=new Set();rewardedVerses=new Set();rewardedBoss=false;bossRewardSerial=0;finishRewarded=false;bossPower=1;mobs=[];mobClock=2;meteorSequenceTime=-1;meteorWarnings=[];stormClock=run.stormFrequency;stormWarning=0;stormActive=false;stormLanes=[];playerShots=[];shotClock=.25;overdrive=0;shockwaves=[];shotCount=0;$('controlHint').textContent=isShooter()?'드래그 조준 · 손 떼서 발사 · PC Space':'드래그로 이동 · 잡몹 자동 사격 · 정답마다 공격력 +0.2';wrongAllowance=3;wrongGrace=0;enemyBullets=[];bulletClock=1.4;score=0;combo=0;maxCombo=0;shield=shipStats().shield;retries=0;elapsed=0;completed=0;misses=new Set();verseEarned=new Map();shipX=W/2;aim=shipX;shipY=aimY=435;bank=0;trail=[];parts=[];beams=[];clearInput();showPanel(null);loadVerse();resize();beep('ok');}
+function loadVerse(){bossPickups=[];fireRequests=0;playerShots=[];shotClock=.25;if(idx>=run.list.length){finish();return;}phase='playing';$('controlHint').textContent=isShooter()?'드래그 조준 · 손 떼서 발사 · PC Space':'드래그로 이동 · 잡몹 자동 사격 · 정답마다 공격력 +0.2';words=run.list[idx].text.split(/\s+/).filter(Boolean);target=0;wave=[];meteors=meteors.filter(m=>m.storm);enemyBullets=[];bulletClock=1.4;meteorClock=1.2;delay=0;invincible=1;cooldown=.2;verseEarned=new Map();spawnWave();renderVerse();updateHUD();}
+function makeDrop(text,index,x,y,correct){
+ return {baseX:clamp(x,45,W-181),x:clamp(x,45,W-181),y,w:136,h:64,text,index,correct,age:0,phase:Math.random()*Math.PI*2,sway:26+Math.random()*14};
+}
+function safeDecoy(b){
+ // 오답 뒤의 정답과 같은 좌우 이동 범위라면 최소 1.25초의 간격을 보장합니다.
+ return !wave.some(t=>t.correct&&b.y>=t.y&&b.y-t.y<t.h+run.speed*1.25&&Math.abs((b.baseX+b.w/2)-(t.baseX+t.w/2))<(b.w+t.w)/2+b.sway+t.sway+24);
+}
+function flightChoices(options,correct){
+ const gap=Math.max(220,100+run.speed*1.25),cols=shuffle([55,205,355]);
+ const drops=shuffle(options).map((text,i)=>makeDrop(text,text===correct?target:-1,cols[i],-65-i*gap,text===correct));
+ return drops;
+}
+function forgiveWrong(b){
+ if(wrongGrace>0)return true;
+ if(wrongAllowance<=0)return false;
+ if(assessment)testErrors++;wrongAllowance--;wrongGrace=1;misses.add(run.list[idx].num);
+ if(!b.correct)wave=wave.filter(t=>t!==b);
+ notice('오답 통과 · 남은 여유 '+wrongAllowance+'회');beep('bad');updateHUD();return true;
+}
+function spawnWave(){
+ wave=[];fillFlightStream();
+}
+function fillFlightStream(){
+ const active=wave.filter(b=>b.correct);let next=active.length?Math.max(...active.map(b=>b.index))+1:target;
+ const gap=Math.max(170,run.speed*1.0);let previous=active.length?active.reduce((a,b)=>a.index>b.index?a:b):null;
+ while(wave.filter(b=>b.correct).length<3&&next<words.length){
+  const y=previous?Math.min(-65,previous.y-gap):-65;
+  // 다음 정답은 좌우를 번갈아 배치해 한 자리에 머무르면 연속 획득할 수 없습니다.
+  let x=previous?(previous.baseX<200?315+Math.random()*30:48+Math.random()*30):(Math.random()<.5?55:335);
+  const item=makeDrop(words[next],next,x,y,true);wave.push(item);
+  // 오답은 드물게 다른 높이에 배치합니다. 다음 정답 통로를 막지 않습니다.
+  if(next%3===1){const pool=[...new Set(run.list.flatMap(v=>v.text.split(/\s+/)))].filter(t=>!words.slice(target,next+4).includes(t));
+   if(pool.length){const decoyX=x;wave.push(makeDrop(pool[Math.floor(Math.random()*pool.length)],-1,decoyX,y-gap*.48,false));}}
+  previous=item;next++;
+ }
+ wave=wave.filter(b=>b.correct||safeDecoy(b));
+}
+function renderVerse(reveal=false){if(phase==='boss'){$('verse').textContent=bossQuiz||'보스를 조준하세요 · 잠시 후 정답 문구가 나타납니다';return;}$('verse').innerHTML=words.map((w,i)=>i<target?'<span class="done">'+esc(w)+'</span>':i===target?'<span class="target">'+(run.mode==='learn'||reveal?esc(w):'[ ? ]')+'</span>':run.mode==='recall'?'':'<span class="future">'+esc(w)+'</span>').join(' ');const el=$('verse').querySelector('.target');if(el)$('verse').scrollTop=Math.max(0,el.offsetTop-$('verse').offsetTop-30);}
+function updateShots(dt){
+ updateAux(dt);
+ shotClock-=dt;overdrive=Math.max(0,overdrive-dt);
+ if(shotClock<=0&&(phase==='boss'||(!isShooter()&&phase==='playing')||(!pointer&&Math.abs(aim-shipX)<10&&(fireRequests>0||keys.has(' '))))){fireRequests=Math.max(0,fireRequests-1);shotClock=(phase==='boss'?.13:!isShooter()?.18:overdrive>0?.11:.22)*shipStats().interval/fireRate();fireMain();shotCount++;}
+ for(const shot of [...playerShots]){
+  const oldY=shot.y;shot.y-=780*dt;
+  // 충돌을 이동 구간 전체에서 검사해 빠른 총알도 문구를 통과하지 않습니다.
+  const objects=[...(phase==='boss'?[{kind:'boss',o:null,x:bossX-68,y:42,w:136,h:53}]:[]),...mobs.filter(()=>buffs.phase<=0).map(d=>({kind:'mob',o:d,x:d.x-d.w/2,y:d.y-d.h/2,w:d.w,h:d.h})),...meteors.filter(m=>!m.storm&&buffs.phase<=0).map(m=>({kind:'rock',o:m,x:m.x-m.r,y:m.y-m.r,w:m.r*2,h:m.r*2}))];
+  const hit=objects.filter(b=>shot.x>b.x&&shot.x<b.x+b.w&&oldY>=b.y&&shot.y<=b.y+b.h).sort((a,b)=>(b.y+b.h)-(a.y+a.h))[0];
+  if(!hit)continue;
+  playerShots=playerShots.filter(p=>p!==shot);
+  if(hit.kind==='boss'){damageBoss(shot.damage??effectivePower());if(phase!=='boss')return;continue;}
+  if(hit.kind==='mob'){hit.o.hitFlash=.09;hit.o.hp=Math.max(0,Math.round((hit.o.hp-(shot.damage??effectivePower()))*10)/10);particle(shot.x,hit.o.y,'#bdf7c4',6);if(hit.o.hp<=0){mobs=mobs.filter(d=>d!==hit.o);score+=hit.o.reward;rewardMob(hit.o.x,hit.o.y);particle(hit.o.x,hit.o.y,'#bdf7c4',25);updateHUD();}continue;}
+  if(hit.kind==='rock'){if(weaponLevel()<11){particle(shot.x,hit.o.y,'#aeb6c0',3);continue;}hit.o.hp=(hit.o.hp??2)-(shot.damage??effectivePower());particle(shot.x,hit.o.y,'#e8c69d',5);if(hit.o.hp<=0){meteors=meteors.filter(m=>m!==hit.o);particle(hit.o.x,hit.o.y,'#e8c69d',22);}continue;}
+
+ }
+ playerShots=playerShots.filter(p=>p.y>-20);
+}
+function updateHUD(){$('chapterHUD').textContent=run?`${run.chapter}장 ${run.list[idx]?.num||run.list.at(-1).num}절`:'말씀 수호자';$('modeHUD').textContent=run?`${isShooter()?'슈팅':'비행'} · ${MODES[run.mode]} · ${Math.min(completed,run.list.length)}/${run.list.length}절`:'기억의 우주';$('powerHUD').textContent='×'+effectivePower().toFixed(1);$('goldHUD').textContent=profile.gold;updateBuffHUD();$('scoreHUD').textContent=score;$('comboHUD').textContent=combo;$('shieldHUD').textContent='◆'.repeat(shield)||'—';$('retryHUD').textContent=retries;$('allowHUD').textContent=wrongAllowance+' / 3';$('progress').firstElementChild.style.width=(run?completed/run.list.length*100:0)+'%';$('bossHUD').textContent=phase==='boss'?`BOSS · HP ${bossHP} / ${bossMaxHP} · 공격력 ×${effectivePower().toFixed(1)} · 자동 연사`:'';}
+function collect(b){
+ if(!['playing','boss'].includes(phase)||delay>0||!wave.includes(b))return;
+ if((!b.correct||(phase==='playing'&&b.index!==target))&&forgiveWrong(b))return;
+ if(phase==='boss')return;
+ if(!b.correct){fail('다른 문구를 먹었어요');return;}if(b.index!==target){fail('먼저 내려온 정답부터 먹어주세요');return;}
+ if(assessment)testHits++;rewardWord();boostPower();const earned=150+(combo>=9?150:0);if(!verseEarned.has(target))verseEarned.set(target,earned);
+ combo++;maxCombo=Math.max(maxCombo,combo);if(combo%5===0){shield=Math.min(shipStats().capacity,shield+1);shieldPulse=1;notice(combo%10===0?'FEVER · 정답 보너스 ×2':'5연속 · 보호막 +1');}
+ particle(isShooter()?b.x+b.w/2:shipX,isShooter()?b.y+b.h/2:shipY-15,'#a0ffe7',22);beep('ok');target++;wave=wave.filter(x=>x!==b);
+ if(target>=words.length)clearVerse();else{fillFlightStream();renderVerse();}updateHUD();
+}
+function fail(msg){mobs=[];playerShots=[];overdrive=0;if(phase!=='playing'||delay>0)return;if(assessment)testErrors++;retries++;misses.add(run.list[idx].num);combo=0;notice(msg+' · 정답: '+words[target]);beep('bad');if(run.mode==='recall'){target=0;verseEarned.clear();}wave=[];meteors=meteors.filter(m=>m.storm);enemyBullets=[];delay=1.7;invincible=2.5;renderVerse(true);updateHUD();}
+function clearVerse(){rewardVerse();playerShots=[];fireRequests=0;phase='review';completed++;score+=Array.from(verseEarned.values()).reduce((a,b)=>a+b,0)+500;wave=[];meteors=meteors.filter(m=>m.storm);enemyBullets=[];beep('clear');next();}
+function shouldBoss(){return completed%5===0||completed===run.list.length;}
+function next(){if(assessment){idx=(idx+1)%run.list.length;loadVerse();return;}if(phase!=='review')return;showPanel(null);if(shouldBoss())startBoss();else{idx++;loadVerse();}updateHUD();}
+function chunks(text){const w=text.split(/\s+/),a=[];for(let i=0;i<w.length;i+=2)a.push(w.slice(i,i+2).join(' '));return a;}
+function startBoss(){
+ mobs=[];cancelStorm();rewardedBoss=false;phase='boss';drops=drops.filter(d=>d.kind!=='calm');bossHP=bossMaxHP;bossRound=0;bossPickups=[];pickupClock=.8;bossQuiz="";bossAge=0;bossX=W/2;bossFlash=0;
+ wave=[];playerShots=[];meteors=[];enemyBullets=[];bulletClock=1.5;meteorClock=2;shotClock=.2;delay=0;invincible=1.5;
+ $('controlHint').textContent='BOSS BATTLE · 자동 연사 · 이동하며 탄환 회피';renderVerse();updateHUD();notice('BOSS INCOMING · 직접 쏴서 격추하세요');
+}
+function damageBoss(damage=effectivePower()){
+ if(phase!=='boss')return;bossHP=Math.max(0,Math.round((bossHP-damage)*10)/10);bossFlash=.1;score+=15;particle(bossX,80,'#ffcba4',8);updateHUD();
+ if(bossHP===0){if(!rewardedBoss){addGold(30);rewardedBoss=true;}score+=1000;particle(bossX,68,'#e9ffcf',70);shockwaves.push({x:bossX,y:68,life:.5});phase='bossClear';bossPickups=[];playerShots=[];enemyBullets=[];meteors=[];cancelStorm();delay=1.2;notice('BOSS DOWN · 격추 성공 +1,000');beep('clear');updateHUD();}
+}
+function openDifficultyChoice(){
+ if(phase!=='bossClear')return;
+ if(idx+1>=run.list.length){idx++;finish();return;}
+ phase='difficultyChoice';clearInput();playerShots=[];enemyBullets=[];meteors=[];mobs=[];drops=[];wave=[];cancelStorm();
+ showPanel('difficultyChoice');$('choiceStatus').textContent=`다음: ${run.chapter}장 ${run.list[idx+1].num}절 · 현재 난이도 ×${run.difficultyScale.toFixed(2)}`;
+ $('choiceEasy').disabled=run.difficultyScale<=.5;$('choiceHard').disabled=run.difficultyScale>=2;resize();
+}
+function chooseDifficulty(direction){
+ if(phase!=='difficultyChoice'||![-1,0,1].includes(direction))return;
+ run.difficultyScale=clamp(run.difficultyScale*(direction<0?.85:direction>0?1.15:1),.5,2);
+ run.speed=run.basePace*run.difficultyScale;run.mobInterval=run.baseMobInterval/run.difficultyScale;bossMaxHP=Math.round(300*run.difficultyScale);
+ mobClock=run.mobInterval;idx++;showPanel(null);clearInput();loadVerse();lastTime=performance.now();resize();notice(direction<0?'조금 더 여유롭게 출발합니다':direction>0?'난이도 UP · 다음 구간 출발':'현재 난이도로 계속합니다');
+}
+
+function spawnBossPickup(){
+ const verse=run.list[bossRound%run.list.length];bossRound++;
+ const parts=chunks(verse.text),at=Math.floor(Math.random()*parts.length),answer=parts[at];
+ bossQuiz=run.chapter+'장 '+verse.num+'절 · '+parts.map((t,i)=>i===at?'[ ? ]':t).join(' ');
+ const pool=[...new Set(run.list.flatMap(v=>chunks(v.text)))].filter(t=>t!==answer);
+ const options=shuffle([{text:answer,correct:true},...(pool.length?[{text:pool[Math.floor(Math.random()*pool.length)],correct:false}]:[])]);
+ bossPickups=options.map((p,i)=>({...p,x:i?322:66,y:145,w:152,h:66}));renderVerse();
+}
+function updateBossPickups(dt){
+ pickupClock-=dt;if(!bossPickups.length&&pickupClock<=0)spawnBossPickup();
+ for(const b of bossPickups){b.y+=clamp(run.speed*.65,65,165)*dt;}
+ const b=bossPickups.find(b=>!(wrongGrace>0&&!b.correct)&&Math.abs(shipX-b.x-b.w/2)<b.w/2+7&&Math.abs(shipY-b.y-b.h/2)<b.h/2+10);
+ if(b){
+  if(b.correct){bossRewardSerial++;spawnGoldBurst(shipX,Math.max(50,shipY-125),4);tryRewardItem(.04);boostPower();score+=150;shield=Math.min(shipStats().capacity,shield+1);shieldPulse=1;particle(shipX,shipY,'#bdfff0',35);notice('정답! 공격력 ×'+bossPower+' · 보호막 +1');beep('clear');}
+  else if(!forgiveWrong(b)){retries++;bossPower=Math.max(1,Math.round((bossPower-.2)*10)/10);misses.add(run.list[idx].num);notice('오답 · 공격력 ×'+bossPower);beep('bad');}
+  bossPickups=[];pickupClock=2;updateHUD();return;
+ }
+ if(bossPickups.length&&bossPickups.every(b=>b.y>H+50)){bossPickups=[];pickupClock=1;}
+}
+function boostPower(){bossPower=Math.min(5,Math.round((bossPower+.2)*10)/10);notice('정답! 공격력 ×'+bossPower.toFixed(1));}
+const MOB_TYPES=[{name:'정찰기 · 약',hp:6,color:'#81d7c2',size:23,reward:60,speed:1.2,fire:0},{name:'전투기 · 중',hp:14,color:'#dfc28a',size:29,reward:120,speed:.9,fire:2.6},{name:'중장갑 · 강',hp:28,color:'#d898ac',size:36,reward:220,speed:.65,fire:1.8}];
+function spawnMob(){if(mobs.length>=run.mobLimit)return;const t=MOB_TYPES[Math.floor(Math.random()*3)],baseX=65+Math.random()*(W-130);mobs.push({...t,maxHP:t.hp,x:baseX,baseX,y:-45,w:t.size*2,h:t.size*1.7,age:0,fireClock:t.fire,armed:t.fire>0&&(t.hp===28||Math.random()<.6)});}
+function updateMobs(dt){
+ if(phase!=='playing'||buffs.phase>0)return;
+ mobClock=Math.max(0,mobClock-dt);if(mobClock<=0&&mobs.length<run.mobLimit){spawnMob();mobClock=run.mobInterval;}
+ for(const d of mobs){d.hitFlash=Math.max(0,(d.hitFlash||0)-dt);const oldX=d.x,oldY=d.y;d.age+=dt;d.x=clamp(d.baseX+Math.sin(d.age*1.7)*42,d.size+10,W-d.size-10);d.y+=clamp(run.speed*.3,38,100)*d.speed*dt;
+  if(d.armed&&d.y>40&&d.y<shipY-80){d.fireClock-=dt;if(d.fireClock<=0){d.fireClock=d.fire;const angle=Math.atan2(shipY-d.y,shipX-d.x),speed=clamp(run.speed*.75,100,220);enemyBullets.push({x:d.x,y:d.y+d.size,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,r:5,source:'mob'});}}
+  if(invincible<=0&&segmentDistance(shipX,shipY,oldX,oldY,d.x,d.y)<d.size*.7+10){d.y=H+100;if(shield){shield--;shieldPulse=1;invincible=1;notice('보호막이 적 충돌을 막았어요');}else{fail('적 기체 충돌');mobClock=run.mobInterval;return;}updateHUD();}
+ }
+ mobs=mobs.filter(d=>d.y<H+70);
+}
+function cancelStorm(){stormWarning=0;stormActive=false;stormLanes=[];meteorSequenceTime=-1;meteorWarnings=[];}
+function updateStorm(dt){
+ if(phase!=='playing'||buffs.phase>0||buffs.calm>0||!run.stormFrequency)return;
+ stormClock-=dt;
+ if(stormClock<=0){stormClock+=30;meteorSequenceTime=0;meteorWarnings=[];const order=shuffle([54,162,270,378,486]);for(let i=0;i<5;i++)meteorWarnings.push({x:order[i],at:i,fired:false,announced:false});}
+ else if(meteorSequenceTime>=0)meteorSequenceTime+=dt;
+ if(meteorSequenceTime<0)return;
+ for(const w of meteorWarnings){
+  if(!w.announced&&meteorSequenceTime>=w.at){w.announced=true;beep('boss');}
+  if(!w.fired&&meteorSequenceTime>=w.at+1){w.fired=true;meteors.push({x:w.x,y:-30,r:21,s:wordFallSpeed()*run.meteorRatio*run.stormBoost,vx:0,rotation:0,storm:true});}
+ }
+ const warnings=meteorWarnings.filter(w=>w.announced&&!w.fired);
+ stormWarning=warnings.length?Math.max(...warnings.map(w=>w.at+1-meteorSequenceTime)):0;stormLanes=warnings.map(w=>w.x);
+ stormActive=meteorWarnings.some(w=>!w.fired)||meteors.some(m=>m.storm);
+ if(!stormActive){meteorSequenceTime=-1;meteorWarnings=[];}
+}
+function spawnDirectionalMeteor(){
+ if(phase!=='playing'||buffs.phase>0||buffs.calm>0)return;
+ const speed=wordFallSpeed()*run.meteorRatio*(.9+Math.random()*.2),x=45+Math.random()*(W-90),y=-28;
+ const travel=(shipY-y)/speed;
+ if(wave.some(b=>b.correct&&Math.abs(b.y+wordFallSpeed()*travel-shipY)<110&&Math.abs(x-b.x-b.w/2)<90))return;
+ meteors.push({x,baseX:x,y,r:13+Math.random()*6,s:speed,vx:0,age:0,zigzag:run.meteorPattern==='zigzag',rotation:Math.random()*6});
+}
+function segmentDistance(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,t=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(px-ax-t*dx,py-ay-t*dy);}
+function finish(){if(assessment){idx=0;loadVerse();return;}mobs=[];cancelStorm();drops=[];phase='result';clearInput();showPanel('result');updateHUD();$('resultMetrics').textContent=`${score.toLocaleString()}점 · 최대 ${maxCombo}연속`;$('resultText').textContent=`${isShooter()?'슈팅':'비행'} 모드 · ${run.chapter}장 ${run.list[0].num}~${run.list.at(-1).num}절 도전 완료 · ${Math.floor(elapsed/60)}분 ${Math.floor(elapsed%60)}초 · 재도전 ${retries}회 · 헷갈린 구절 ${misses.size}개 · 이번 획득 ${runGold} G · 보유 ${profile.gold} G`;$('retryWeakBtn').disabled=misses.size===0;$('advanceBtn').textContent=run.mode==='learn'?'빈칸 단계로 도전':run.mode==='blank'?'암송 단계로 도전':'같은 구절 다시 도전';}
+function menu(){drops=[];buffs={calm:0,power:0,phase:0};assessment=null;mobs=[];bossPickups=[];cancelStorm();playerShots=[];overdrive=0;phase='menu';run=null;wave=[];meteors=meteors.filter(m=>m.storm);enemyBullets=[];clearInput();showPanel('menu');buildMenu();updateHUD();$('verse').textContent='문장을 기억할수록 더 멀리 날아갑니다.';}
+function pause(){if(!['playing','boss','bossClear'].includes(phase))return;resumePhase=phase;phase='paused';clearInput();showPanel('pause');}
+function resume(){if(phase!=='paused')return;phase=resumePhase;showPanel(null);lastTime=performance.now();}
+function step(dt){
+ const active=['playing','boss','bossClear'].includes(phase);
+ if(phase!=='paused'){flightTime+=dt;for(const s of stars)s.y=(s.y+s.s*dt*(active?Math.max(7,run.speed/18)*(stormActive?2:1):1))%H;}
+ if(!active)return;elapsed+=dt;if(assessment){$('modeHUD').textContent='테스트 '+(assessment.round+1)+'/3 · 남은 '+Math.max(0,Math.ceil(30-elapsed))+'초';if(elapsed>=30){endTestRound();return;}}feedbackLeft=Math.max(0,feedbackLeft-dt);invincible=Math.max(0,invincible-dt);wrongGrace=Math.max(0,wrongGrace-dt);
+ // 터치와 키보드에 동일한 부드러운 이동을 적용합니다.
+ const dx=(keys.has('ArrowRight')||keys.has('d')?1:0)-(keys.has('ArrowLeft')||keys.has('a')?1:0);
+ const dy=(keys.has('ArrowDown')||keys.has('s')?1:0)-(keys.has('ArrowUp')||keys.has('w')?1:0);
+ if(dx)aim=clamp(aim+dx*370*shipStats().move*dt,22,W-22);if(dy&&!isShooter())aimY=clamp(aimY+dy*290*shipStats().move*dt,230,H-42);
+ if(isShooter())aimY=435;const previousX=shipX;shipX+=(aim-shipX)*(1-Math.exp(-18*shipStats().move*dt));shipY+=(aimY-shipY)*(1-Math.exp(-18*shipStats().move*dt));
+ bank+=(clamp((shipX-previousX)/Math.max(dt,.001)/650,-.4,.4)-bank)*Math.min(1,dt*8);
+ trail.push({x:shipX,y:shipY+25,life:.55});if(trail.length>40)trail.shift();
+ if(delay>0){delay=Math.max(0,delay-dt);if(delay===0){if(phase==='bossClear'){openDifficultyChoice();}else if(phase==='boss')startBoss();else{spawnWave();renderVerse();}}return;}
+ updateLoot(dt);updateStorm(dt);updateMobs(dt);if(delay>0)return;if(phase==='boss'){bossAge+=dt;bossX=W/2+Math.sin(bossAge*.85)*150;bossFlash=Math.max(0,bossFlash-dt);updateBossPickups(dt);}
+ rowClock+=dt;for(const b of wave){b.age+=dt;const zigzag=2/Math.PI*Math.asin(Math.sin(b.age*2.1+b.phase));b.x=clamp(b.baseX+zigzag*b.sway,8,W-b.w-8);b.y+=wordFallSpeed()*dt;}
+ wave=wave.filter(b=>b.correct||b.y<H+100);
+
+ // 기체의 중심부가 문구에 닿을 때만 판정하여 날개 끝의 억울한 충돌을 줄입니다.
+ const touched=!isShooter()&&wave.find(b=>{const correct=b.correct&&(phase==='boss'||b.index===target);if(!correct&&wrongGrace>0)return false;const inset=correct?0:15;return shipX+8>b.x+inset&&shipX-8<b.x+b.w-inset&&shipY+10>b.y+inset&&shipY-12<b.y+b.h-inset;});
+ if(touched){collect(touched);return;}
+ if(phase==='playing'||phase==='boss'){const before=target,wasPhase=phase;updateShots(dt);if(delay>0||target!==before||phase!==wasPhase)return;}
+ if(wave.some(b=>b.correct&&(phase==='boss'||b.index===target)&&b.y>H+25)){
+  if(phase==='playing')fail('정답이 지나갔어요');else{misses.add(run.list[idx].num);retries++;notice('정답: '+bossAnswer);wave=[];delay=1.7;updateHUD();}return;
+ }
+ // 속도가 높을수록 운석도 더 자주 등장합니다. 다음 정답 도착 지점은 피해서 배치합니다.
+ meteorClock-=dt;if(meteorClock<=0&&phase==='playing'&&buffs.calm<=0&&buffs.phase<=0&&!stormWarning&&!stormActive){
+  meteorClock=clamp(130/run.speed,.38,1.6)+Math.random()*.18;
+  if(meteors.filter(m=>!m.storm).length<9)spawnDirectionalMeteor();
+ }
+
+ for(const m of meteors){if(buffs.phase>0)continue;const oldX=m.x,oldY=m.y;m.y+=m.s*dt;if(m.zigzag&&!m.storm){m.age+=dt;m.x=clamp(m.baseX+Math.sin(m.age*2.4)*38,m.r+4,W-m.r-4);m.vx=(m.x-oldX)/Math.max(dt,.001);}else m.x+=(m.vx||0)*dt;if(segmentDistance(shipX,shipY,oldX,oldY,m.x,m.y)<m.r+10&&invincible<=0){if(!m.storm)m.y=H+100;if(shield){shield--;shieldPulse=1;invincible=1;notice('보호막이 운석을 막았어요');particle(shipX,shipY,'#a0ffe7');}else if(phase==='playing'){fail('운석 충돌');break;}else{retries++;invincible=1;notice('운석 충돌 · 잠시 보호됩니다');}updateHUD();}}meteors=meteors.filter(m=>m.y<H+40&&m.x>-100&&m.x<W+100);
+ if(phase==='boss'||phase==='playing'){
+  if(phase==='boss'){bulletClock-=dt;
+  if(bulletClock<=0){
+   bulletClock=clamp(310/run.speed,1.2,3.2);const speed=clamp(run.speed*.7,75,205);
+   // 일정한 부채꼴 패턴. 정답 주변의 탄환은 지워 획득할 공간을 남깁니다.
+   for(const vx of [-65,0,65])enemyBullets.push({x:bossX,y:95,vx,vy:speed,r:5});
+  }
+  }
+  for(const b of enemyBullets){b.x+=b.vx*dt;b.y+=b.vy*dt;}
+  enemyBullets=enemyBullets.filter(b=>b.y<H+20&&b.x>-20&&b.x<W+20&&![...wave,...bossPickups].some(t=>t.correct&&Math.abs(b.x-(t.x+t.w/2))<t.w/2+32&&Math.abs(b.y-(t.y+t.h/2))<t.h/2+45));
+  const hit=enemyBullets.find(b=>Math.hypot(b.x-shipX,b.y-shipY)<b.r+9);
+  if(hit&&invincible<=0){enemyBullets=enemyBullets.filter(b=>b!==hit);invincible=1.2;
+   if(shield){shield--;shieldPulse=1;notice('보호막이 탄환을 막았어요');}else{if(assessment)testErrors++;retries++;combo=0;notice('탄환 피격 · 잠시 보호됩니다');beep('bad');}
+   particle(shipX,shipY,'#efac98');updateHUD();
+  }
+ }
+
+}
+function wrap(text,width,font){ctx.font=font;let line='',out=[];for(const c of text){if(line&&ctx.measureText(line+c).width>width){out.push(line);line=c;}else line+=c;}if(line)out.push(line);return out;}
+function drawCraft(x,y,tilt){
+ const aux=AUX[run?.aux];if(aux){ctx.save();ctx.translate(x-45,y);ctx.fillStyle='#263847';ctx.strokeStyle=aux.color;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-9,-10,18,24,5);ctx.fill();ctx.stroke();ctx.fillStyle=aux.color;ctx.fillRect(-3,-18,6,12);ctx.beginPath();ctx.arc(0,3,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#8edbd9';ctx.fillRect(-3,16,6,8+Math.sin(flightTime*22)*3);ctx.restore();}
+
+ ctx.save();ctx.translate(x,y);ctx.rotate(tilt);const craft=shipStats();ctx.scale(craft.width,1);const engine=ctx.createLinearGradient(0,19,0,83);engine.addColorStop(0,'#eafff4');engine.addColorStop(.22,'#6af0cd');engine.addColorStop(1,'#36bca000');ctx.fillStyle=engine;
+ ctx.beginPath();ctx.moveTo(-7,20);ctx.quadraticCurveTo(-5,50,0,72+Math.sin(flightTime*35)*9);ctx.quadraticCurveTo(5,50,7,20);ctx.fill();
+ ctx.globalAlpha=.6;ctx.fillRect(-22,24,4,25+Math.sin(flightTime*23)*7);ctx.fillRect(18,24,4,25+Math.cos(flightTime*23)*7);ctx.globalAlpha=1;
+ const hull=ctx.createLinearGradient(-32,0,32,0);hull.addColorStop(0,'#355369');hull.addColorStop(.45,'#dceeea');hull.addColorStop(.55,craft.color);hull.addColorStop(1,'#315067');ctx.fillStyle=hull;ctx.strokeStyle='#adccc7';ctx.lineWidth=.75;
+ ctx.beginPath();ctx.moveTo(0,-34);ctx.lineTo(9,-3);ctx.lineTo(34,28);ctx.lineTo(10,20);ctx.lineTo(0,28);ctx.lineTo(-10,20);ctx.lineTo(-34,28);ctx.lineTo(-9,-3);ctx.closePath();ctx.fill();ctx.stroke();
+ ctx.fillStyle='#124353';ctx.strokeStyle='#6de2db';ctx.beginPath();ctx.moveTo(0,-21);ctx.lineTo(5,-4);ctx.lineTo(3,10);ctx.lineTo(-3,10);ctx.lineTo(-5,-4);ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=craft.color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-28,24);ctx.lineTo(-19,19);ctx.moveTo(28,24);ctx.lineTo(19,19);ctx.stroke();
+ if(shield>0){const pulse=1+shieldPulse*.3;ctx.save();ctx.scale(pulse,pulse);ctx.fillStyle='rgba(125,195,255,'+(.08+shieldPulse*.12)+')';ctx.strokeStyle='#a3d9ff';ctx.shadowColor='#72c9ff';ctx.shadowBlur=12+shieldPulse*20;ctx.lineWidth=1.5+shieldPulse*2;ctx.beginPath();ctx.ellipse(0,0,42,48,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.strokeStyle='#91ceff66';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(0,0,32,48,Math.sin(flightTime)*.5,0,Math.PI*2);ctx.stroke();ctx.restore();}else if(invincible>0){ctx.strokeStyle='#adf5ed';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(0,0,42,48,0,0,Math.PI*2);ctx.stroke();}ctx.restore();
+}
+function draw(dt){
+ ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);ctx.globalAlpha=1;ctx.fillStyle='#040b16';ctx.fillRect(0,0,W,H);
+ const glow=ctx.createRadialGradient(340,120,10,270,180,420);glow.addColorStop(0,'#123b4655');glow.addColorStop(.5,'#11273a44');glow.addColorStop(1,'#06121f00');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ // 먼 행성, 시차가 있는 별과 항로가 지속적으로 뒤로 흘러갑니다.
+ ctx.save();ctx.translate(440,20+Math.sin(flightTime*.04)*12);const planet=ctx.createRadialGradient(-40,-35,10,0,0,95);planet.addColorStop(0,'#24505d');planet.addColorStop(.65,'#102a3c');planet.addColorStop(1,'#050e1b');ctx.fillStyle=planet;ctx.beginPath();ctx.arc(0,0,95,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#7bc6c817';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,143,28,-.4,0,Math.PI*2);ctx.stroke();ctx.restore();
+ ctx.strokeStyle='#6faeb608';ctx.lineWidth=1;for(let i=0;i<7;i++){ctx.beginPath();ctx.moveTo(W/2+(i-3)*20,-20);ctx.lineTo(W/2+(i-3)*155,H);ctx.stroke();}
+ for(const s of stars){ctx.globalAlpha=.15+s.r*.22;ctx.strokeStyle=s.r>1.2?'#b9dfdd':'#597a92';ctx.lineWidth=s.r*.7;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x,s.y+(run?s.r*Math.max(11,run.speed/12)*(stormActive?1.8:1):1));ctx.stroke();}ctx.globalAlpha=1;
+ if(phase==='boss'||phase==='bossClear'||(phase==='paused'&&resumePhase==='boss')){
+  ctx.save();ctx.translate(bossX,63);ctx.rotate(Math.sin(flightTime)*.07);ctx.strokeStyle='#e3a39c';ctx.fillStyle=bossFlash>0?'#fff1db':'#251b2e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,-27);ctx.lineTo(76,7);ctx.lineTo(29,34);ctx.lineTo(0,23);ctx.lineTo(-29,34);ctx.lineTo(-76,7);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#f4c3b5';ctx.fillRect(-22,-2,44,4);ctx.strokeStyle='#e8bdab40';for(let i=0;i<Math.ceil(bossHP/100);i++){ctx.beginPath();ctx.ellipse(0,3,88+i*9,41+i*5,0,0,Math.PI*2);ctx.stroke();}ctx.restore();
+ }
+ for(const warning of meteorWarnings){if(!warning.announced||warning.fired)continue;ctx.save();const x=warning.x;
+ ctx.fillStyle='#ff5f4420';ctx.fillRect(x-28,0,56,H);ctx.strokeStyle='#ffae71';ctx.lineWidth=2;ctx.setLineDash([12,9]);ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle='#422119';ctx.beginPath();ctx.arc(x,95,24,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffe0b0';ctx.textAlign='center';ctx.font='bold 34px system-ui';ctx.fillText('!',x,107);ctx.font='11px system-ui';ctx.fillText('파괴 불가',x,136);ctx.restore();}
+ for(const d of mobs){if(buffs.phase>0)continue;ctx.save();ctx.translate(d.x,d.y);ctx.fillStyle=d.hitFlash>0?'#e7f5ef':'#182c3b';ctx.strokeStyle=d.color;ctx.lineWidth=2;
+ ctx.beginPath();ctx.moveTo(0,d.size);ctx.lineTo(-d.size,d.size*.3);ctx.lineTo(-d.size*.7,-d.size*.7);ctx.lineTo(0,-d.size*.35);ctx.lineTo(d.size*.7,-d.size*.7);ctx.lineTo(d.size,d.size*.3);ctx.closePath();ctx.fill();ctx.stroke();
+ ctx.fillStyle=d.color;ctx.fillRect(-8,0,16,4);if(d.armed){ctx.fillRect(-d.size*.6,d.size*.2,5,14);ctx.fillRect(d.size*.6-5,d.size*.2,5,14);}
+ ctx.fillStyle='#263946';ctx.fillRect(-d.size,-d.size-10,d.size*2,3);ctx.fillStyle=d.color;ctx.fillRect(-d.size,-d.size-10,d.size*2*d.hp/d.maxHP,3);ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText(d.name+(d.armed?' · 사격':''),0,-d.size-18);ctx.restore();}
+ for(const b of bossPickups){ctx.save();ctx.fillStyle='#122d39ee';ctx.strokeStyle=run.mode==='learn'&&b.correct?'#bcffe3':'#9baeb9';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(b.x,b.y,b.w,b.h,9);ctx.fill();ctx.stroke();ctx.fillStyle='#eafff4';ctx.textAlign='center';ctx.textBaseline='middle';const rows=wrap(b.text,b.w-16,'500 17px system-ui');rows.forEach((t,i)=>ctx.fillText(t,b.x+b.w/2,b.y+b.h/2+(i-(rows.length-1)/2)*21));ctx.restore();}
+ if(phase==='boss'){ctx.save();ctx.fillStyle='#422b2a';ctx.fillRect(150,111,240,4);ctx.fillStyle='#ffbd9b';ctx.fillRect(150,111,240*bossHP/bossMaxHP,4);ctx.restore();}
+ for(const b of wave){
+  const hinted=run?.mode==='learn'&&b.correct&&(phase==='boss'||b.index===target);ctx.save();ctx.shadowColor=hinted?'#62dcc1':'#528ca8';ctx.shadowBlur=hinted?12:3;ctx.fillStyle=hinted?'#123c39eb':'#0d2434ed';ctx.strokeStyle=hinted?'#98f5d7':'#42667d';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(b.x,b.y,b.w,b.h,6);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+  ctx.fillStyle=hinted?'#93efd5':'#58869a';ctx.fillRect(b.x+12,b.y+7,16,2);ctx.fillRect(b.x+b.w-16,b.y+b.h-10,4,2);
+  const font=phase==='boss'?18:20,rows=wrap(b.text,b.w-20,`500 ${font}px system-ui`);ctx.fillStyle='#e1f2f0';ctx.textAlign='center';ctx.textBaseline='middle';rows.forEach((r,i)=>ctx.fillText(r,b.x+b.w/2,b.y+b.h/2+(i-(rows.length-1)/2)*22));ctx.restore();
+ }
+ for(const m of meteors){if(buffs.phase>0)continue;ctx.save();ctx.translate(m.x,m.y);ctx.rotate(-Math.atan2(m.vx||0,m.s));const tail=ctx.createLinearGradient(0,0,0,-60);tail.addColorStop(0,'#eea77466');tail.addColorStop(1,'#eea77400');ctx.fillStyle=tail;ctx.beginPath();ctx.moveTo(-m.r*.6,0);ctx.lineTo(0,-60);ctx.lineTo(m.r*.6,0);ctx.fill();ctx.rotate(flightTime*1.5+(m.rotation||0));ctx.fillStyle=m.storm?'#49212b':'#655750';ctx.strokeStyle=m.storm?'#ff9067':'#b8967c';ctx.lineWidth=1;ctx.beginPath();for(let i=0;i<7;i++){const a=i*Math.PI*2/7,r=m.r*(i%2?.85:1.1);i?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();}
+ for(const shot of playerShots){ctx.save();ctx.strokeStyle=shot.color||(overdrive>0?'#ffe6a3':'#b5fff0');ctx.shadowColor='#6ef4d8';ctx.shadowBlur=12;ctx.lineWidth=shotWidth(shot);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(shot.x,shot.y+17);ctx.lineTo(shot.x,shot.y);ctx.stroke();ctx.restore();}
+ for(const ring of shockwaves){if(phase!=='paused')ring.life-=dt;ctx.save();ctx.globalAlpha=Math.max(0,ring.life*2);ctx.strokeStyle='#b5ffe9';ctx.lineWidth=2;ctx.beginPath();ctx.arc(ring.x,ring.y,Math.max(1,(.5-ring.life)*300),0,Math.PI*2);ctx.stroke();ctx.restore();}shockwaves=shockwaves.filter(r=>r.life>0);
+ if((isShooter()||phase==='boss')&&['playing','boss'].includes(phase)){ctx.save();ctx.strokeStyle='#91dbd329';ctx.setLineDash([3,8]);ctx.beginPath();ctx.moveTo(shipX,shipY-35);ctx.lineTo(shipX,55);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=overdrive>0?'#ffe2a0':'#72a99f';ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText(phase==='boss'?'AUTO FIRE':overdrive>0?'OVERDRIVE '+overdrive.toFixed(1)+'s':'RELEASE TO FIRE',shipX,shipY+52);ctx.restore();}
+ for(const b of enemyBullets){ctx.save();ctx.fillStyle='#ffc1a8';ctx.shadowColor='#ec896f';ctx.shadowBlur=9;ctx.beginPath();ctx.ellipse(b.x,b.y,b.r,b.r*1.65,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+ for(const t of trail){if(phase!=='paused'){t.life-=dt;t.y+=40*dt;}ctx.globalAlpha=Math.max(0,t.life)*.12;ctx.fillStyle='#77e7c8';ctx.beginPath();ctx.arc(t.x,t.y,Math.max(1,t.life*12),0,Math.PI*2);ctx.fill();}trail=trail.filter(t=>t.life>0);ctx.globalAlpha=1;
+ drawLightning();drawDrops();if(run)drawCraft(shipX,shipY,bank);
+ for(const p of parts){if(phase!=='paused'){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;}ctx.globalAlpha=Math.max(0,p.life/.6);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,2,2);}parts=parts.filter(p=>p.life>0);ctx.globalAlpha=1;$('toast').textContent=feedbackLeft>0?feedback:'';
+}
+// 절·보스 전환은 상태만 바꾸며, 애니메이션 예약은 한 곳에서만 실행합니다.
+
+function frame(t){const dt=Math.min(.05,Math.max(0,(t-lastTime)/1000));lastTime=t;step(dt);draw(dt);requestAnimationFrame(frame);}
+function pointerAim(e){const r=canvas.getBoundingClientRect();aim=clamp((e.clientX-r.left)/r.width*W,22,W-22);aimY=isShooter()?435:clamp((e.clientY-r.top-62)/r.height*H,230,H-42);}
+canvas.onpointerdown=e=>{if(!['playing','boss'].includes(phase)||pointer)return;e.preventDefault();fireRequests=0;pointer={id:e.pointerId};canvas.setPointerCapture(e.pointerId);pointerAim(e);};
+canvas.onpointermove=e=>{if(pointer?.id===e.pointerId)pointerAim(e);};canvas.onpointerup=e=>{if(pointer?.id!==e.pointerId)return;pointer=null;if(isShooter()&&['playing','boss'].includes(phase)&&delay<=0)fireRequests=overdrive>0?3:1;};canvas.onpointercancel=e=>{if(pointer?.id===e.pointerId){pointer=null;fireRequests=0;}};
+window.addEventListener('keydown',e=>{if(['INPUT','SELECT','BUTTON'].includes(document.activeElement?.tagName)&&phase==='menu')return;if([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Escape'].includes(e.key))e.preventDefault();if(e.key==='Escape'){phase==='paused'?resume():pause();return;}keys.add(e.key.length===1?e.key.toLowerCase():e.key);});window.addEventListener('keyup',e=>{keys.delete(e.key);keys.delete(e.key.toLowerCase());});window.addEventListener('blur',()=>{clearInput();pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInput();pause();}});window.addEventListener('resize',resize);
+$('choiceEasy').onclick=()=>chooseDifficulty(-1);$('choiceSame').onclick=()=>chooseDifficulty(0);$('choiceHard').onclick=()=>chooseDifficulty(1);
+$('startBtn').onclick=()=>{assessment=null;start();};$('testBtn').onclick=startAssessment;$('testExit').onclick=menu;$('difficultyPreset').onchange=()=>applyPreset($('difficultyPreset').value);for(const id of ['speed','meteorPattern','meteorRatio','stormFrequency','stormBoost','mobInterval','mobLimit'])$(id).onchange=customSetting;$('mode').onchange=customSetting;$('range').onchange=updateMode;$('pauseBtn').onclick=pause;$('resumeBtn').onclick=resume;$('quitBtn').onclick=$('menuBtn').onclick=menu;$('nextBtn').onclick=next;
+$('retryWeakBtn').onclick=()=>{const list=run.list.filter(v=>misses.has(v.num));start(list,run.mode);};$('advanceBtn').onclick=()=>{const list=run.list,mode={learn:'blank',blank:'recall',recall:'recall'}[run.mode];$('mode').value=mode;start(list,mode);};
+const SETTINGS_KEY='orbit_settings_v1';
+const settingIds=['difficultyPreset','mode','range','speed','mobInterval','mobLimit','meteorPattern','meteorRatio','stormFrequency','stormBoost'];
+function getSettings(){return Object.fromEntries(settingIds.map(id=>[id,$(id).value]));}
+function validSettings(data){if(!data||typeof data!=='object'||Array.isArray(data))throw Error('설정 형식 오류');const out={};for(const id of settingIds){if(data[id]===undefined)continue;const value=String(data[id]);if(!Array.from($(id).options).some(o=>o.value===value))throw Error('설정 값 오류: '+id);out[id]=value;}return out;}
+function restoreSettings(data){for(const [id,value] of Object.entries(validSettings(data)))$(id).value=value;updateMode();$('presetNote').textContent='저장한 설정을 적용했습니다.';}
+function saveSettings(){if(assessment)return;try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(getSettings()));}catch{}}
+for(const id of settingIds)$(id).addEventListener('change',saveSettings);
+const nativeStart=start;start=function(...args){saveSettings();return nativeStart(...args);};
+function validateBackup(data){
+ if(!data||data.format!=='orbit-flight-save'||data.version!==1||!data.profile)throw Error('말씀 수호자 저장파일이 아닙니다.');
+ const p=data.profile,integer=(v,min,max)=>Number.isInteger(v)&&v>=min&&v<=max;
+ if(!integer(p.gold,0,1e9)||!integer(p.weaponLevel,1,20)||!integer(p.fireLevel,1,15)||!Array.isArray(p.owned)||!p.owned.includes('scout')||p.owned.some(x=>!Object.hasOwn(SHIPS,x))||!p.owned.includes(p.selected)||!Array.isArray(p.auxOwned)||p.auxOwned.some(x=>!Object.hasOwn(AUX,x))||(p.aux!=='none'&&!p.auxOwned.includes(p.aux)))throw Error('기체 또는 강화 기록이 올바르지 않습니다.');
+ const levels={};for(const id of Object.keys(AUX)){const n=p.auxLevels?.[id]??1;if(!integer(n,1,10))throw Error('보조무기 레벨 오류');levels[id]=n;}
+ return {profile:{gold:p.gold,owned:[...new Set(p.owned)],selected:p.selected,weaponLevel:p.weaponLevel,fireLevel:p.fireLevel,auxOwned:[...new Set(p.auxOwned)],aux:p.aux,auxLevels:levels},settings:validSettings(data.settings||{})};
+}
+let pendingImport=null;
+function cancelImport(){pendingImport=null;$('importPreview').classList.add('hidden');$('saveFile').value='';}
+$('exportSave').onclick=()=>{if(phase!=='menu')return;const data={format:'orbit-flight-save',version:1,savedAt:new Date().toISOString(),profile,settings:getSettings()};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='말씀수호자-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);$('backupNotice').textContent='저장파일 다운로드를 요청했습니다.';};
+$('importSave').onclick=()=>{cancelImport();$('saveFile').click();};
+$('saveFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>100000)throw Error('저장파일이 너무 큽니다.');const data=validateBackup(JSON.parse(await file.text()));if(phase!=='menu')return;pendingImport=data;$('importSummary').textContent=`불러올 기록: ${data.profile.gold} G · 공격력 Lv.${data.profile.weaponLevel} · 공격속도 Lv.${data.profile.fireLevel} · 기체 ${data.profile.owned.length}종. 적용하면 현재 기록을 교체합니다.`;$('importPreview').classList.remove('hidden');$('backupNotice').textContent='내용을 확인한 뒤 적용하세요.';}catch(e){cancelImport();$('backupNotice').textContent='불러오기 실패: '+e.message;}};
+$('cancelImport').onclick=cancelImport;
+$('confirmImport').onclick=()=>{if(phase!=='menu'||!pendingImport)return;profile=pendingImport.profile;restoreSettings(pendingImport.settings);previewShip=profile.selected;previewAux=profile.aux==='none'?'collector':profile.aux;saveProfile();saveSettings();renderHangar();updateHUD();cancelImport();$('backupNotice').textContent=storageOK?'기록을 불러왔습니다.':'이번 실행에 적용됐지만 브라우저 저장은 실패했습니다. 저장파일을 보관하세요.';};
+$('dataNote').textContent=window.BIBLE?'연결된 data.js의 본문을 사용합니다.':'내장 본문: 18~22장 · 기존 1~22장 data.js를 같은 폴더에 넣으면 전체 장을 사용할 수 있습니다.';
+buildMenu();applyPreset('intermediate');try{const stored=localStorage.getItem(SETTINGS_KEY);if(stored)restoreSettings(JSON.parse(stored));}catch{}resize();$('verse').textContent='문장을 기억할수록 더 멀리 날아갑니다.';requestAnimationFrame(frame);
+</script></body></html>
