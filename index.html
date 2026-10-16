@@ -121,7 +121,7 @@ function equipAux(id,slot=selectedAuxSlot){
 let previewAux='collector',auxScroll=0,selectedAuxSlot='left';
 function fireRate(){return 1+((run?run.fireLevel:profile.fireLevel)-1)*.07;}
 function auxLevel(id){return run?.auxLevels?.[id]||profile.auxLevels[id]||1;}
-function auxSkillPeriod(id,lv=auxLevel(id)){return id==='thunder'?Math.max(3.5,8-(lv-1)*.5):id==='guard'?25-(lv-1):id==='ring'?Math.max(4,10-(lv-1)*.6):0;}
+function auxSkillPeriod(id,lv=auxLevel(id)){return id==='thunder'?Math.max(2.4,4-(lv-1)*(1.6/9)):id==='guard'?25-(lv-1):id==='ring'?Math.max(4,10-(lv-1)*.6):0;}
 function auxAbilityText(id,lv){return id==='collector'?'흡수 범위 '+(220+(lv-1)*18)+' · 흡수 속도 '+(480+(lv-1)*35):id==='thunder'?auxSkillPeriod(id,lv).toFixed(1)+'초마다 전격 · 기본 피해 '+(12+(lv-1)*2):id==='guard'?auxSkillPeriod(id,lv)+'초마다 보호막 1개':id==='ring'?auxSkillPeriod(id,lv).toFixed(1)+'초마다 반경 '+(120+(lv-1)*8)+' 탄환 제거':id==='plasma'?'폭발 반경 '+(65+(lv-1)*4):id==='frost'?'3초간 이동속도 -45%':id==='flame'?'3초간 초당 탄환 피해의 35%':id==='laser'?'탄환당 최대 3개 대상 관통':id==='star'?'3발 동시 발사':'빠른 자동 연사';}
 function activeAux(){return !run||assessment?[]:Object.entries(run.auxSlots).filter(([,id])=>AUX[id]);}
 function hurtAuxMob(m,damage){if(!mobs.includes(m)||m.hp<=0)return;m.hp=Math.max(0,m.hp-damage);m.hitFlash=.1;if(m.hp<=0){mobs=mobs.filter(x=>x!==m);score+=m.reward;rewardMob(m.x,m.y);particle(m.x,m.y,'#bde9ff',16);updateHUD();}}
